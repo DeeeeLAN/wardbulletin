@@ -1,0 +1,9 @@
+# Do not include in your live environment.
+########################################################################
+
+services:
+  djangoapp:
+    build: 
+      dockerfile: ./Dockerfile-dev
+    environment:
+      DJANGO_MODE: dev

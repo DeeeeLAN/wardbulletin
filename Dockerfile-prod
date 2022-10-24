@@ -1,0 +1,18 @@
+FROM python:3
+
+# Arbitrary location
+RUN mkdir -p /opt/services/djangoapp/src
+WORKDIR /opt/services/djangoapp/src
+
+# Install dependencies
+# use --system flag because we don't need an extra virtualenv
+COPY Pipfile Pipfile.lock /opt/services/djangoapp/src/
+RUN pip install pipenv && pipenv install --system
+
+# Copy over project code
+COPY . /opt/services/djangoapp/src
+
+EXPOSE 8000
+
+# Default command to run when starting the container
+CMD ["gunicorn", "--chdir", "wardbulletin", "--bind", ":8000", "wardbulletin.wsgi.prod:application"]

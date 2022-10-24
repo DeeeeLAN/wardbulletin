@@ -1,0 +1,4 @@
+MARIADB_USER=wardbulletin
+MARIADB_PASSWORD=wo_unto_the_liar
+MARIADB_ROOT_PASSWORD=wo_unto_the_liar
+MARIADB_DATABASE=wardbulletin

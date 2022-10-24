@@ -1,0 +1,65 @@
+# https://pawamoy.github.io/posts/docker-compose-django-postgres-nginx/
+#
+# Commands:
+#   sudo docker-compose build
+#   sudo docker-compose up
+#   sudo docker-compose run --rm djangoapp /bin/bash -c "cd wardbulletin; ./manage.py migrate"
+#   sudo docker-compose run djangoapp wardbulletin/manage.py collectstatic --no-input
+#
+########################################################################
+version: '3'
+
+services:
+  djangoapp:
+    build: 
+      context: .
+      dockerfile: ./Dockerfile-prod
+    restart: always
+    environment:
+      DJANGO_MODE: prod
+    ports:
+      - 8200:8000
+    volumes:
+      - .:/opt/services/djangoapp/src
+      - static_volume:/opt/services/djangoapp/static
+      - media_volume:/opt/services/djangoapp/media
+    networks:
+      - nginx_network
+      - mysql_network
+    depends_on:
+      - mysql
+
+  nginx:
+    image: nginx
+    restart: always
+    ports:
+      - 8280:80
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/opt/services/djangoapp/static
+      - media_volume:/opt/services/djangoapp/media
+    depends_on:
+      - djangoapp
+    networks:
+      - nginx_network
+
+  mysql:
+    image: mariadb
+    restart: always
+    env_file:
+      - config/db/mysql_env
+    networks:
+      - mysql_network
+    volumes:
+      - mysql_volume:/var/lib/mysql
+
+networks:
+  nginx_network:
+    driver: bridge
+  mysql_network:
+    driver: bridge
+
+volumes:
+  mysql_volume:
+  static_volume:
+  media_volume:
