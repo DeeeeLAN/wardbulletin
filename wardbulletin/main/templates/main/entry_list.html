@@ -1,0 +1,24 @@
+{% if entry_list %}
+<div class="w-full flex flex-col gap-3">
+  {% for entry in entry_list %}
+    {% if not entry.value %}
+    <div class="w-full flex flex-row justify-center py-6">
+      <div class="">{{ entry.title }}</div>
+    {% else %}
+    <div class="w-full flex flex-row justify-between items-center">
+      <div class="max-w-[45%]">{{ entry.title }}</div>
+      <div class="max-w-[45%] text-right flex flex-col sm:flex-row justify-end items-center gap-x-2 sm:divide-x divide-brown-800 divide-solid">
+        {% if not entry.url %}
+        <div>{{ entry.value }}</div>
+        {% else %}
+        <div><a class="text-blue-500 underline underline-offset-2" href="{{ entry.url }}">{{ entry.value }}</a></div>
+        {% endif %}
+        {% if entry.additional_note %}
+        <div class="pl-2">{{ entry.additional_note }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+    </div>
+  {% endfor %}
+</div>
+{% endif %}

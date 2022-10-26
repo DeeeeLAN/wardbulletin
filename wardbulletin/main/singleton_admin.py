@@ -20,7 +20,7 @@ class DjangoSingletonModelAdmin(admin.ModelAdmin):
 		return False
 
 	def has_view_permission(self, request, obj=None):
-		return False
+		return True
 
 	def has_delete_permission(self, request, obj=None):
 		return False
@@ -46,10 +46,10 @@ class DjangoSingletonModelAdmin(admin.ModelAdmin):
 			custom_urls = []
 		return custom_urls + urls
 
-	def response_change(self, request, obj):
-		msg = f'{obj} changed successfully'
-		self.message_user(request, msg)
-		return HttpResponseRedirect("../../")
+	# def response_change(self, request, obj):
+	# 	msg = f'{obj} changed successfully'
+	# 	self.message_user(request, msg)
+	# 	return HttpResponseRedirect("../../")
 
 	def _changeform_view(self, request, object_id, form_url, extra_context):
 		# self.model.objects.get_or_create(pk=self.singleton_instance_id)

@@ -170,14 +170,14 @@ class BulletinEntry(models.Model):
 	)
 	value = models.CharField(
 		max_length=128,
-		null=True,
+		default='',
 		blank=True,
 		help_text="If added, will right-justify in-line with the (now left-justified) title."
 	)
 	url = models.CharField(max_length=255, null=True, blank=True, help_text="If added, will hyperlink the value.")
 	additional_note = models.CharField(
 		max_length=128,
-		null=True,
+		default='',
 		blank=True,
 		help_text="If included, will show up next to the value (for example, the hymn number)."
 	)
@@ -206,7 +206,25 @@ class BulletinEntry(models.Model):
 		verbose_name_plural = 'Bulletin Entries'
 
 @receiver(pre_save, sender=BulletinEntry)
-def bulletin_entry_pre_save(_, instance, **kwargs):
+def bulletin_entry_pre_save(sender, instance, **kwargs):
 	'''Sets bulletin entry position if it is not set'''
 	if instance.position is None:
 		instance.position = BulletinEntry.objects.all().count()
+
+
+class Quote(models.Model):
+	enabled = models.BooleanField(
+		default=True,
+		help_text="If the quote should be displayed or not."
+	)
+	source = models.CharField(max_length=128, help_text="The source of the quote")
+	quote = models.TextField(help_text="The quote content")
+	url = models.CharField(max_length=255, default='', blank=True, help_text="The optional URL of the quote")
+
+	def __str__(self):
+		return f'{self.source} - {self.quote}'
+
+	class Meta:
+		'''Meta class'''
+		verbose_name = 'Quote'
+		verbose_name_plural = 'Quotes'

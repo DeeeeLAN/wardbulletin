@@ -1,7 +1,7 @@
 '''Main site admin interfaces'''
 from django.contrib import admin
 from django.db.models import Q
-from .models import GeneralSettings, MeetingTime, BulletinEntry, BulletinGroup
+from .models import GeneralSettings, MeetingTime, BulletinEntry, BulletinGroup, Quote
 from .singleton_admin import DjangoSingletonModelAdmin
 
 # Register your models here.
@@ -86,7 +86,25 @@ class BulletinGroupAdmin(admin.ModelAdmin):
 	)
 	actions = [make_enabled, make_disabled, make_inverted]
 
+
+class QuoteAdmin(admin.ModelAdmin):
+	'''Quote Admin Interface'''
+	fields = [
+		'enabled',
+		'source',
+		'quote',
+		'url',
+	]
+	list_display = (
+		'enabled',
+		'source',
+		'quote',
+		'url',
+	)
+	actions = [make_enabled, make_disabled, make_inverted]
+
 admin.site.register(GeneralSettings, GeneralSettingsAdmin)
 admin.site.register(MeetingTime, MeetingTimeAdmin)
 admin.site.register(BulletinGroup, BulletinGroupAdmin)
 admin.site.register(BulletinEntry, BulletinEntryAdmin)
+admin.site.register(Quote, QuoteAdmin)
