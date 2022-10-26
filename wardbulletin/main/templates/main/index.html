@@ -1,0 +1,127 @@
+{% extends "main/base.html" %}
+{% load static %}
+    
+{% block content %}
+
+<div class="w-full px-4">
+  <div class="container mx-auto flex max-w-6xl flex-col gap-6 items-center">
+    <div class="">Picture</div>
+    <div class="">Quote</div>
+    <div class="font-bold text-2xl text-center">Ward Bulletin Sacrament Meeting</div>
+    <div class="font-bold text-xl text-center text-center">{{ next_sunday }} &mdash; {{ meeting_time }} Meeting Time</div>
+    <div class="w-full flex flex-col gap-3">
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Presiding</div>
+        <div class="max-w-[50%] text-right">[[ presiding ]]</div>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Conducting</div>
+        <div class="max-w-[50%] text-right">[[ conducting ]]</div>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Chorister</div>
+        <div class="max-w-[50%] text-right">[[ chorister ]]</div>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Organist</div>
+        <div class="max-w-[50%] text-right">[[ organist ]]</div>
+      </div>
+    </div>
+    <div class="">Welcome and Announcements</div>
+    <div class="w-full flex flex-col gap-3">
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Opening Hymn</div>
+        <div class="max-w-[50%] text-right">[[ opening_hymn ]]</div>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Opening Prayer</div>
+        <div class="max-w-[50%] text-right">[[ opening_prayer ]]</div>
+      </div>
+    </div>
+    <div class="">Ward Business</div>
+    <div class="w-full flex flex-row justify-between">
+      <div class="max-w-[50%]">Sacrament Hymn</div>
+      <div class="max-w-[50%] text-right">[[ sacrament_hymn ]]</div>
+    </div>
+    <div>Blessing and Passing of the Sacrament</div>
+    <div class="w-full flex flex-col gap-3">
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Speaker</div>
+        <div class="max-w-[50%] text-right">[[ speaker_1 ]]</div>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Special Musical Number</div>
+        <div class="max-w-[50%] text-right">[[ musical_number ]]</div>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Speaker</div>
+        <div class="max-w-[50%] text-right">[[ speaker_2 ]]</div>
+      </div>
+    </div>
+    <div class="w-full flex flex-col gap-3">
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Closing Hymn</div>
+        <div class="max-w-[50%] text-right">[[ closing_hymn ]]</div>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Closing Prayer</div>
+        <div class="max-w-[50%] text-right">[[ closing_prayer ]]</div>
+      </div>
+    </div>
+    <div class="w-full border-b border-brown-400"></div>
+    <div class="font-bold text-2xl text-center">Second Hour {{ second_hour_time }}</div>
+    <div class="font-bold text-xl text-center">Sunday School</div>
+    <span class="">1<sup>st</sup>, 3<sup>rd</sup> & 5<sup>th</sup> Sundays</span>
+    <div class="w-full flex flex-col gap-3">
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Gospel Doctrine</div>
+        <div class="max-w-[50%] text-right">[[ gospel_doctrine ]]</div>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Youth Sunday School</div>
+        <div class="max-w-[50%] text-right">[[ youth_sunday_school ]]</div>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Primary</div>
+        <div class="max-w-[50%] text-right">[[ primary ]]</div>
+      </div>
+    </div>
+    <div class="font-bold text-xl text-center">Relief Society and Priesthood</div>
+    <span class="">2<sup>nd</sup> & 4<sup>th</sup> Sundays</span>
+    <div class="w-full flex flex-col gap-3">
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Relief Society</div>
+        <div class="max-w-[50%] text-right">[[ relief_society ]]</div>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Elders Quorum</div>
+        <div class="max-w-[50%] text-right">[[ elders_quorum ]]</div>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">YM/YW Quorums/Classes</div>
+        <div class="max-w-[50%] text-right">[[ ym_yw_quorums_classes ]]</div>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Primary</div>
+        <div class="max-w-[50%] text-right">[[ primary ]]</div>
+      </div>
+    </div>
+    <div class="font-bold text-xl text-center">Additional Information</div>
+    <div class="w-full flex flex-col gap-3">
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Ward Announcements and Information</div>
+        <a class="text-blue-400 underline underline-offset-2 max-w-[50%] text-right" href="/announcements">Announcements</a>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Ward Council Members and Resources</div>
+        <a class="text-blue-400 underline underline-offset-2 max-w-[50%] text-right" href="/contacts-resources">Countacts/Resources</a>
+      </div>
+      <div class="w-full flex flex-row justify-between">
+        <div class="max-w-[50%]">Subscribe to the Ward Midweek Email List</div>
+        <a class="text-blue-400 underline underline-offset-2 max-w-[50%] text-right" href="mailto:wardbulletin@gmail.com?subject=Subscribe to the Ward Midweek Email List">Subscribe to Midweek Emails</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

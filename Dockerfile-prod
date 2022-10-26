@@ -6,8 +6,8 @@ WORKDIR /opt/services/djangoapp/src
 
 # Install dependencies
 # use --system flag because we don't need an extra virtualenv
-COPY Pipfile Pipfile.lock /opt/services/djangoapp/src/
-RUN pip install pipenv && pipenv install --system
+COPY Pipfile /opt/services/djangoapp/src/
+RUN pip install pipenv && pipenv lock --system
 
 # Copy over project code
 COPY . /opt/services/djangoapp/src
