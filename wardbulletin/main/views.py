@@ -8,9 +8,10 @@ import markdown
 from .models import GeneralSettings, MeetingTime, BulletinGroup, Quote, Announcement, ContactTable
 
 def get_default_context():
-	if GeneralSettings.objects.first():
-		theme_color = GeneralSettings.objects.first().get_theme_color_display().lower()
-		logo_path = Path(GeneralSettings.objects.first().logo_path)
+	gs = GeneralSettings.objects.first()
+	if gs:
+		theme_color = gs.get_theme_color_display().lower()  # type: ignore
+		logo_path = Path(gs.logo_path)
 		if not logo_path.exists() or not logo_path.is_file():
 			logo_path = ''
 		else:
@@ -28,10 +29,11 @@ def get_default_context():
 def index(request):
 	'''Index page'''
 
-	if MeetingTime.objects.first():
-		first_hour_meeting_time = MeetingTime.objects.first().first_hour_meeting_time
-		second_hour_meeting_time = MeetingTime.objects.first().second_hour_meeting_time
-		meeting_date = MeetingTime.objects.first().get_next_meeting_date()
+	mt = MeetingTime.objects.first()
+	if mt:
+		first_hour_meeting_time = mt.first_hour_meeting_time
+		second_hour_meeting_time = mt.second_hour_meeting_time
+		meeting_date = mt.get_next_meeting_date()
 	else:
 		first_hour_meeting_time = None
 		second_hour_meeting_time = None
@@ -42,7 +44,7 @@ def index(request):
 	relief_society_and_priesthood_entries = None
 	bulletin_group = BulletinGroup.objects.filter(enabled=True).first()
 	if bulletin_group:
-		bulletin_entries = bulletin_group.bulletinEntries.filter(enabled=True).order_by('position')
+		bulletin_entries = bulletin_group.bulletinEntries.filter(enabled=True).order_by('position')  # type: ignore
 		if bulletin_entries:
 			sacrament_meeting_entries = bulletin_entries.filter(section=1)
 			sunday_school_entries = bulletin_entries.filter(section=2)
@@ -50,9 +52,10 @@ def index(request):
 
 	image_path = ''
 	image_name = ''
-	if GeneralSettings.objects.first():
-		if GeneralSettings.objects.first().photos_path != '':
-			photos_path = Path(GeneralSettings.objects.first().photos_path)
+	gs = GeneralSettings.objects.first()
+	if gs:
+		if gs.photos_path != '':
+			photos_path = Path(gs.photos_path)
 			if photos_path.exists() and photos_path.is_file():
 				image_path = photos_path
 				image_name = photos_path.stem

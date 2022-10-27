@@ -1,0 +1,7 @@
+{
+  "python.linting.pylintArgs": [
+    "--load-plugins pylint_django --django-settings-module=.wardbulletin.wardbulletin.settings.dev",
+    "--indent-string='\t'",
+    "--max-line-length=120"
+  ]
+}

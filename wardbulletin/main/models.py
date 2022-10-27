@@ -136,7 +136,7 @@ class BulletinGroup(models.Model):
 	@admin.display(description='Number of Bulletin Entries')
 	def num_entries(self):
 		'''Returns the number of bulletin entries in the group'''
-		return self.bulletinEntries.all().count()
+		return self.bulletinEntries.all().count()  # type: ignore
 
 	class Meta:
 		'''Meta class'''
@@ -197,7 +197,7 @@ class BulletinEntry(models.Model):
 
 	def table_view(self):
 		longest = 0
-		for field in self._meta.get_fields():
+		for field in self._meta.get_fields():  # type: ignore
 			longest = max(longest, len(str(getattr(self, field.name))))
 
 		return (
@@ -288,8 +288,20 @@ class ContactTable(models.Model):
 		blank=True,
 		help_text="The order the table appears on the page. Leave blank to auto-fill with next value."
 	)
+	raw_content = models.TextField(
+		blank=True,
+		help_text='''If the default table layout doesn't work for what you need to display, you can use
+		this field to have full control over what gets displayed. You can put markdown or HTML into this
+		field and it will be displayed directly. Any Contacts associated with the table will be ignored,
+		so you will need to add them manually to this field as well. 
+		[Learn more about markdown tables.](https://www.markdownguide.org/extended-syntax/#tables)'''
+	)
 
 	def __str__(self):
+		if self.raw_content != '':
+			if len(self.raw_content) > 128:
+				return f'{self.raw_content[0:127]}...'
+			return self.raw_content
 		return (
 			f'{self.name}, enabled: {self.enabled}, entry count: {self.num_entries()}, position: {self.position}'
 		)
@@ -297,7 +309,7 @@ class ContactTable(models.Model):
 	@admin.display(description='Number of Contacts')
 	def num_entries(self):
 		'''Returns the number of contacts in the group'''
-		return self.contacts.all().count()
+		return self.contacts.all().count()  # type: ignore
 
 	class Meta:
 		'''Meta class'''

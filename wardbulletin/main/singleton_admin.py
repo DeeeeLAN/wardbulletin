@@ -1,7 +1,5 @@
 from django.urls import re_path
 from django.contrib import admin
-from django.http import HttpResponseRedirect
-from django.db.utils import OperationalError
 import logging 
 
 logger = logging.getLogger(__name__) 
@@ -52,7 +50,7 @@ class DjangoSingletonModelAdmin(admin.ModelAdmin):
 			extra_context = {}
 		extra_context.update({'show_save_and_add_another': False})
 
-		return super()._changeform_view(
+		return super()._changeform_view(  # type: ignore
 			request,
 			object_id,
 			form_url=form_url,

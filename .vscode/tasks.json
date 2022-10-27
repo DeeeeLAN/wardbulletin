@@ -1,0 +1,17 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "TailwindCSS Watch",
+      "type": "shell",
+      "command": "./tailwindcss -i wardbulletin/main/static/main/source.css -o wardbulletin/main/static/main/dist.css --watch"
+    },
+    {
+      "label": "TailwindCSS Minify",
+      "type": "shell",
+      "command": "./tailwindcss -i wardbulletin/main/static/main/source.css -o wardbulletin/main/static/main/dist.css --minify"
+    }
+  ]
+}
