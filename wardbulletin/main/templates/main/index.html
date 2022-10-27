@@ -2,16 +2,18 @@
 {% load static %}
     
 {% block content %}
-
 <div class="w-full p-4">
-  <div class="container mx-auto flex max-w-100vw md:max-w-[90vw] xl:max-w-6xl flex-col gap-6 items-center">
+  <div class="container mx-auto max-w-100vw md:max-w-[90vw] xl:max-w-6xl flex flex-col gap-6 items-center">
     <div class="flex flex-col sm:flex-row justify-around">
+      {% if image %}
       <div class="flex flex-col gap-4 sm:w-[45%]">
         <div class="bg-{{ theme_color }}-400 w-full p-1 pl-4 rounded-lg text-{{ theme_color }}-900">{{image.name}}</div>
         <div class="">
           <img class="rounded-lg object-scale-down" src="{% static image.path %}" alt="{{ image.name }}" />
         </div>
       </div>
+      {% endif %}
+      {% if quote %}
       <div class="sm:w-[45%] flex flex-col justify-center">
         <div class="flex flex-col gap-4 items-end pl-4 py-2 border-l-8 border-l-{{ theme_color }}-400 rounded-2xl">
           <div class="italic font-serif">{{quote.quote}}</div>
@@ -22,6 +24,7 @@
           {% endif %}
         </div>
       </div>
+      {% endif %}
     </div>
     <div class="font-bold text-2xl text-center">Ward Bulletin Sacrament Meeting</div>
     {% if meeting_date and first_hour_meeting_time %}
@@ -61,5 +64,4 @@
     </div>
   </div>
 </div>
-
 {% endblock %}

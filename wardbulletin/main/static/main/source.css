@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.prose h1 ~ p,
+.prose h2 ~ p,
+.prose h3 ~ p,
+.prose h4 ~ p,
+.prose h5 ~ p,
+.prose h6 ~ p {
+  margin-left: 3rem;
+}

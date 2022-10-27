@@ -3,16 +3,30 @@ import datetime
 from random import choice
 from pathlib import Path
 from django.shortcuts import render
-from .models import GeneralSettings, MeetingTime, BulletinGroup, Quote
+from django.conf import settings
+import markdown
+from .models import GeneralSettings, MeetingTime, BulletinGroup, Quote, Announcement, ContactTable
+
+def get_default_context():
+	if GeneralSettings.objects.first():
+		theme_color = GeneralSettings.objects.first().get_theme_color_display().lower()
+		logo_path = Path(GeneralSettings.objects.first().logo_path)
+		if not logo_path.exists() or not logo_path.is_file():
+			logo_path = ''
+		else:
+			logo_path = logo_path.relative_to(settings.BASE_DIR.parent / 'main' / 'static')
+	else:
+		theme_color = 'brown'
+		logo_path = ''
+
+	return {
+		'logo': logo_path,
+		'theme_color': theme_color,
+	}
 
 # Create your views here.
 def index(request):
 	'''Index page'''
-
-	if GeneralSettings.objects.first():
-		theme_color = GeneralSettings.objects.first().get_theme_color_display().lower()
-	else:
-		theme_color = 'brown'
 
 	if MeetingTime.objects.first():
 		first_hour_meeting_time = MeetingTime.objects.first().first_hour_meeting_time
@@ -34,15 +48,24 @@ def index(request):
 			sunday_school_entries = bulletin_entries.filter(section=2)
 			relief_society_and_priesthood_entries = bulletin_entries.filter(section=3)
 
-	temple_images = [i.relative_to('main/static/') for i in Path('main/static/main/images/temples').iterdir()]
-	image_path = choice(temple_images)
+	image_path = ''
+	image_name = ''
+	if GeneralSettings.objects.first():
+		if GeneralSettings.objects.first().photos_path != '':
+			photos_path = Path(GeneralSettings.objects.first().photos_path)
+			if photos_path.exists() and photos_path.is_file():
+				image_path = photos_path
+				image_name = photos_path.stem
+			elif photos_path.exists() and photos_path.is_dir():
+				temple_images = [i.relative_to(settings.BASE_DIR.parent / 'main' / 'static') for i in photos_path.iterdir()]
+				image_path = choice(temple_images)
+				image_name = image_path.stem
 
-	context = {
-		'logo': '',
-		'theme_color': theme_color,
+	context = get_default_context()
+	context.update({
 		'image': {
 			'path': image_path,
-			'name': image_path.stem
+			'name': image_name
 		},
 		'quote': choice(list(Quote.objects.filter(enabled=True))),
 		'meeting_date': meeting_date,
@@ -51,19 +74,28 @@ def index(request):
 		'sacrament_meeting_entries': sacrament_meeting_entries,
 		'sunday_school_entries': sunday_school_entries,
 		'relief_society_and_priesthood_entries': relief_society_and_priesthood_entries,
-	}
+	})
 	return render(request, 'main/index.html', context)
 
 
 def announcements(request):
 	'''Announcements page'''
 
-	context = {}
+	announcement_qs = Announcement.objects.filter(enabled=True).order_by('position')
+	md_client = markdown.Markdown(extensions=['smarty', 'md_in_html', 'pymdownx.magiclink'])
+	context = get_default_context()
+	context.update({
+		'announcements': [md_client.convert(a.content) for a in announcement_qs],
+	})
 	return render(request, 'main/announcements.html', context)
 
 
 def contacts_resources(request):
 	'''Contacts/Resources page'''
 
-	context = {}
+	context = get_default_context()
+	context.update({
+		'contact_tables': ContactTable.objects.filter(enabled=True),
+	})
+
 	return render(request, 'main/contacts-resources.html', context)

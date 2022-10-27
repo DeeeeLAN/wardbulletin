@@ -11,13 +11,19 @@
   </head>
   <body class="bg-{{ theme_color }}-50">
 
-    <div class="bg-{{ theme_color }}-200 w-full py-6 px-4">
-      <div class="container mx-auto max-w-6xl flex flex-row items-center justify-between gap-4 md:max-w-[90vw]">
-        <a class="" href="{% url 'index' %}">{% if logo %}{{ logo }}{% endif %}</a>
+    <div class="bg-{{ theme_color }}-200 w-full py-1 px-4 h-20">
+      <div class="container mx-auto max-w-6xl h-full flex flex-row items-center justify-between gap-4 md:max-w-[90vw]">
+        <div class="max-h-full">
+          <a class="" href="{% url 'index' %}">
+            {% if logo %}
+            <img class="object-scale-down" src="{% static logo %}" alt="Logo" />
+            {% endif %}
+          </a>
+        </div>
         <div class="hidden sm:flex flex-row items-center gap-4">
-          <a href="{% url 'index' %}">Sacrament Program</a>
-          <a href="{% url 'announcements' %}">Announcements</a>
-          <a href="{% url 'contacts-resources' %}">Contacts/Resources</a>
+          <a class="hover:text-{{ theme_color }}-800 {% if request.path == '/' %}text-{{ theme_color }}-800 italic{% endif %}" href="{% url 'index' %}">Sacrament Program</a>
+          <a class="hover:text-{{ theme_color }}-800 {% if request.path == '/announcements' %}text-{{ theme_color }}-800 italic{% endif %}" href="{% url 'announcements' %}">Announcements</a>
+          <a class="hover:text-{{ theme_color }}-800 {% if request.path == '/contacts-resources' %}text-{{ theme_color }}-800 italic{% endif %}" href="{% url 'contacts-resources' %}">Contacts/Resources</a>
         </div>
         <div class="relative flex sm:hidden">
           <input type="checkbox" id="nav-input" class="peer hidden absolute">
@@ -41,9 +47,9 @@
           </label>
           <div id="nav-dropdown" class="invisible peer-checked:visible flex absolute right-0 top-8 bg-{{ theme_color }}-600 text-{{ theme_color }}-50 p-4 w-max rounded-xl max-h-0 overflow-hidden peer-checked:max-h-48 transition-[max-height,_padding,_visibility]">
             <div class="flex flex-col gap-6">
-              <a href="{% url 'index' %}">Sacrament Program</a>
-              <a href="{% url 'announcements' %}">Announcements</a>
-              <a href="{% url 'contacts-resources' %}">Contacts/Resources</a>
+              <a class="hover:text-{{ theme_color }}-100 {% if request.path == '/' %}text-{{ theme_color }}-100 italic{% endif %}" href="{% url 'index' %}">Sacrament Program</a>
+              <a class="hover:text-{{ theme_color }}-100 {% if request.path == '/announcements' %}text-{{ theme_color }}-100 italic{% endif %}" href="{% url 'announcements' %}">Announcements</a>
+              <a class="hover:text-{{ theme_color }}-100 {% if request.path == '/contacts-resources' %}text-{{ theme_color }}-100 italic{% endif %}" href="{% url 'contacts-resources' %}">Contacts/Resources</a>
             </div>
           </div>
         </div>
@@ -72,6 +78,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-slate-600
   bg-slate-800
   text-slate-50
+  text-slate-100
+  text-slate-800
   text-slate-900
   border-slate-400
   border-l-slate-400
@@ -81,6 +89,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-gray-600
   bg-gray-800
   text-gray-50
+  text-gray-100
+  text-gray-800
   text-gray-900
   border-gray-400
   border-l-gray-400
@@ -90,6 +100,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-zinc-600
   bg-zinc-800
   text-zinc-50
+  text-zinc-100
+  text-zinc-800
   text-zinc-900
   border-zinc-400
   border-l-zinc-400
@@ -99,6 +111,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-neutral-600
   bg-neutral-800
   text-neutral-50
+  text-neutral-100
+  text-neutral-800
   text-neutral-900
   border-neutral-400
   border-l-neutral-400
@@ -108,6 +122,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-stone-600
   bg-stone-800
   text-stone-50
+  text-stone-100
+  text-stone-800
   text-stone-900
   border-stone-400
   border-l-stone-400
@@ -117,6 +133,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-brown-600
   bg-brown-800
   text-brown-50
+  text-brown-100
+  text-brown-800
   text-brown-900
   border-brown-400
   border-l-brown-400
@@ -126,6 +144,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-red-600
   bg-red-800
   text-red-50
+  text-red-100
+  text-red-800
   text-red-900
   border-red-400
   border-l-red-400
@@ -135,6 +155,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-orange-600
   bg-orange-800
   text-orange-50
+  text-orange-100
+  text-orange-800
   text-orange-900
   border-orange-400
   border-l-orange-400
@@ -144,6 +166,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-amber-600
   bg-amber-800
   text-amber-50
+  text-amber-100
+  text-amber-800
   text-amber-900
   border-amber-400
   border-l-amber-400
@@ -153,6 +177,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-yellow-600
   bg-yellow-800
   text-yellow-50
+  text-yellow-100
+  text-yellow-800
   text-yellow-900
   border-yellow-400
   border-l-yellow-400
@@ -162,6 +188,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-lime-600
   bg-lime-800
   text-lime-50
+  text-lime-100
+  text-lime-800
   text-lime-900
   border-lime-400
   border-l-lime-400
@@ -171,6 +199,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-green-600
   bg-green-800
   text-green-50
+  text-green-100
+  text-green-800
   text-green-900
   border-green-400
   border-l-green-400
@@ -180,6 +210,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-emerald-600
   bg-emerald-800
   text-emerald-50
+  text-emerald-100
+  text-emerald-800
   text-emerald-900
   border-emerald-400
   border-l-emerald-400
@@ -189,6 +221,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-teal-600
   bg-teal-800
   text-teal-50
+  text-teal-100
+  text-teal-800
   text-teal-900
   border-teal-400
   border-l-teal-400
@@ -198,6 +232,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-cyan-600
   bg-cyan-800
   text-cyan-50
+  text-cyan-100
+  text-cyan-800
   text-cyan-900
   border-cyan-400
   border-l-cyan-400
@@ -207,6 +243,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-sky-600
   bg-sky-800
   text-sky-50
+  text-sky-100
+  text-sky-800
   text-sky-900
   border-sky-400
   border-l-sky-400
@@ -216,6 +254,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-blue-600
   bg-blue-800
   text-blue-50
+  text-blue-100
+  text-blue-800
   text-blue-900
   border-blue-400
   border-l-blue-400
@@ -225,6 +265,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-indigo-600
   bg-indigo-800
   text-indigo-50
+  text-indigo-100
+  text-indigo-800
   text-indigo-900
   border-indigo-400
   border-l-indigo-400
@@ -234,6 +276,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-violet-600
   bg-violet-800
   text-violet-50
+  text-violet-100
+  text-violet-800
   text-violet-900
   border-violet-400
   border-l-violet-400
@@ -243,6 +287,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-purple-600
   bg-purple-800
   text-purple-50
+  text-purple-100
+  text-purple-800
   text-purple-900
   border-purple-400
   border-l-purple-400
@@ -252,6 +298,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-fuchsia-600
   bg-fuchsia-800
   text-fuchsia-50
+  text-fuchsia-100
+  text-fuchsia-800
   text-fuchsia-900
   border-fuchsia-400
   border-l-fuchsia-400
@@ -261,6 +309,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-pink-600
   bg-pink-800
   text-pink-50
+  text-pink-100
+  text-pink-800
   text-pink-900
   border-pink-400
   border-l-pink-400
@@ -270,6 +320,8 @@ Add tailwind colors used in the theme here so the dist.css picks them up properl
   bg-rose-600
   bg-rose-800
   text-rose-50
+  text-rose-100
+  text-rose-800
   text-rose-900
   border-rose-400
   border-l-rose-400

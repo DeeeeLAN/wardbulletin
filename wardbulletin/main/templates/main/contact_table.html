@@ -1,0 +1,24 @@
+
+
+{% if table %}
+<div class="font-bold text-3xl text-start w-full">{{ table.name }}</div>
+<table class="table-auto">
+  <thead>
+    <tr>
+      <th>Calling</th>
+      <th>Name (email)</th>
+      <th>Phone</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for contact in table.contacts.all %}
+    <tr>
+      <td>{{ contact.calling|safe }}</td>
+      <td><a href="mailto:{{ contact.email }}">{{ contact.name|safe }}</a></td>
+      <td><a href="tel:{{ contact.phone }}">{{ contact.phone|safe }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="italic">{{ table.additional_notes|safe }}</div>
+{% endif %}

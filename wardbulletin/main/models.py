@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models.signals import pre_save
 from django.contrib import admin
 from django.dispatch import receiver
+from django.conf import settings
 
 # Create your models here.
 
@@ -59,9 +60,23 @@ class GeneralSettings(models.Model):
 	]
 
 	theme_color = models.PositiveSmallIntegerField(default=BROWN, choices=COLOR_CHOICES, help_text="Website Theme Color")
+	logo_path = models.FilePathField(
+		path=str(settings.BASE_DIR.parent / 'main' / 'static' / 'main' / 'images'),
+		blank=True,
+		recursive=True,
+		help_text='''Path to the logo displayed in the top-left corner of the webpage.
+		If not provided, the corner will be left blank.''')
+	photos_path = models.FilePathField(
+		path=str(settings.BASE_DIR.parent / 'main' / 'static' / 'main' / 'images'),
+		blank=True,
+		allow_folders=True,
+		recursive=True,
+		help_text='''Path to the directory containing the photos that will be displayed
+		randomly on the homepage. If not provided, the quote will be lonely.''')
+
 
 	def __str__(self):
-		return self.get_theme_color_display()
+		return "General Settings"
 
 	class Meta:
 		'''Meta class'''
@@ -73,13 +88,11 @@ class MeetingTime(models.Model):
 	next_meeting_date = models.DateField(
 		null=True,
 		blank=True,
-		help_text=(
-			"The website automatically displays the next Sunday for the meeting date."
-			"Set a value here to override the next meeting date."
-		)
+		help_text='''Optional. The website automatically displays the next Sunday for the meeting date.
+			Set a value here to override the next meeting date.'''
 	)
-	first_hour_meeting_time = models.CharField(max_length=8)
-	second_hour_meeting_time = models.CharField(max_length=8)
+	first_hour_meeting_time = models.CharField(max_length=8, help_text='Required. Your Sacrament Meeting meeting time.')
+	second_hour_meeting_time = models.CharField(max_length=8, help_text='Required. Your classes meeting time.')
 
 	def get_next_meeting_date(self):
 		'''Returns the next sunday, or next_meeting_date if
@@ -97,11 +110,7 @@ class MeetingTime(models.Model):
 
 
 	def __str__(self):
-		return (
-			f'Next Meeting Date: {self.next_meeting_date}, ' +
-			f'First Hour: {self.first_hour_meeting_time}, ' +
-			f'Second Hour: {self.second_hour_meeting_time}'
-		)
+		return "Meeting Times"
 
 
 	class Meta:
@@ -115,9 +124,9 @@ class BulletinGroup(models.Model):
 	'''A group of bulletin entries'''
 	enabled = models.BooleanField(
 		default=False,
-		help_text="If the group should be displayed or not. Only the first enabled group will be displayed."
+		help_text="Determines if the group should be displayed or not. Only the first enabled group will be displayed."
 	)
-	name = models.CharField(max_length=255, help_text="The name of the bulletin entry group")
+	name = models.CharField(max_length=255, help_text="The name of the bulletin group. It is only to help you keep track of what entries the group contains, so choose anything you like.")
 
 	def __str__(self):
 		return (
@@ -151,54 +160,57 @@ class BulletinEntry(models.Model):
 		null=True,
 		blank=True,
 		on_delete=models.CASCADE,
-		related_name='bulletinEntries'
+		related_name='bulletinEntries',
+		help_text='Optional. Select which Bulletin Group this entry belongs to.'
 	)
-	enabled = models.BooleanField(default=True, help_text="If the row should be displayed or not.")
+	enabled = models.BooleanField(default=True, help_text="Determines if the row should be displayed on the page.")
 	section = models.PositiveSmallIntegerField(
 		default=SACRAMENT_MEETING,
 		choices=SECTION_CHOICES,
-		help_text="The page section to add to."
+		help_text="Required. The page section to appear in."
 	)
 	position = models.PositiveSmallIntegerField(
 		null=True,
 		blank=True,
-		help_text="The sorting position on the page within the group. Leave blank to auto-fill with next value."
+		help_text="The order the entry appears within the group. Leave blank to auto-fill with next value."
 	)
 	title = models.CharField(
 		max_length=128,
-		help_text="Without a value, will center on the page. With a value included, will be left-justified."
+		help_text="Required. Without a value, will center on the page. With a value included, will be left-justified."
 	)
 	value = models.CharField(
 		max_length=128,
 		default='',
 		blank=True,
-		help_text="If added, will right-justify in-line with the (now left-justified) title."
+		help_text="Optional. If added, will right-justify in-line with the (now left-justified) title."
 	)
-	url = models.CharField(max_length=255, null=True, blank=True, help_text="If added, will hyperlink the value.")
+	url = models.CharField(max_length=255, null=True, blank=True, help_text="Optional. If added, will add a hyperlink to the Value field.", verbose_name="URL")
 	additional_note = models.CharField(
 		max_length=128,
 		default='',
 		blank=True,
-		help_text="If included, will show up next to the value (for example, the hymn number)."
+		help_text="Optional. If included, will show up to the right of the Value field, outside the hyperlink (for example, the hymn number next to the hymn name)."
 	)
 
 	def __str__(self):
-		# longest = 0
-		# for field in self._meta.get_fields():
-		# 	longest = max(longest, len(str(getattr(self, field.name))))
-
-		# return (
-		# 	f'\n{"-" * (longest + 22)}\n' + 
-		# 	f'|         Enabled | {self.enabled:<{longest}} |\n' +
-		# 	f'|         Section | {self.section:<{longest}} |\n' +
-		# 	f'|        Position | {self.position:<{longest}} |\n' +
-		# 	f'|           Title | {self.title:<{longest}} |\n' +
-		# 	f'|           Value | {self.value:<{longest}} |\n' +
-		# 	f'|             URL | {self.url:<{longest}} |\n' +
-		# 	f'| Additional Note | {self.additional_note:<{longest}} |\n' +
-		# 	f'{"-" * (longest + 22)}\n'
-		# )
 		return f'{self.title}{": " if self.value else ""}{self.value}'
+
+	def table_view(self):
+		longest = 0
+		for field in self._meta.get_fields():
+			longest = max(longest, len(str(getattr(self, field.name))))
+
+		return (
+			f'\n{"-" * (longest + 22)}\n' + 
+			f'|         Enabled | {self.enabled:<{longest}} |\n' +
+			f'|         Section | {self.section:<{longest}} |\n' +
+			f'|        Position | {self.position:<{longest}} |\n' +
+			f'|           Title | {self.title:<{longest}} |\n' +
+			f'|           Value | {self.value:<{longest}} |\n' +
+			f'|             URL | {self.url:<{longest}} |\n' +
+			f'| Additional Note | {self.additional_note:<{longest}} |\n' +
+			f'{"-" * (longest + 22)}\n'
+		)
 
 	class Meta:
 		'''Meta class'''
@@ -215,16 +227,120 @@ def bulletin_entry_pre_save(sender, instance, **kwargs):
 class Quote(models.Model):
 	enabled = models.BooleanField(
 		default=True,
-		help_text="If the quote should be displayed or not."
+		help_text="Determines if the quote should be added to the display rotation."
 	)
-	source = models.CharField(max_length=128, help_text="The source of the quote")
-	quote = models.TextField(help_text="The quote content")
-	url = models.CharField(max_length=255, default='', blank=True, help_text="The optional URL of the quote")
+	source = models.CharField(max_length=128, help_text="Required. The source of the quote.")
+	quote = models.TextField(help_text="Required. The quote content.")
+	url = models.CharField(max_length=255, default='', blank=True, help_text="Optional. The optional URL of the quote. If included, will add a hyperlink to the source field under the quote on the homepage.")
 
 	def __str__(self):
+		if len(self.quote) > 32:
+			return f'{self.source} - {self.quote[0:31]}...'
 		return f'{self.source} - {self.quote}'
 
 	class Meta:
 		'''Meta class'''
 		verbose_name = 'Quote'
 		verbose_name_plural = 'Quotes'
+
+
+class Announcement(models.Model):
+	enabled = models.BooleanField(
+		default=True,
+		help_text="Determines if the announcement should be displayed on the announcements page."
+	)
+	position = models.PositiveSmallIntegerField(
+		null=True,
+		blank=True,
+		help_text="The order the announcement appears on the page. Leave blank to auto-fill with next value."
+	)
+	content = models.TextField(help_text="Supports markdown formatting")
+
+	class Meta:
+		'''Meta class'''
+		verbose_name = 'Announcement'
+		verbose_name_plural = 'Announcements'
+
+
+@receiver(pre_save, sender=Announcement)
+def announcement_pre_save(sender, instance, **kwargs):
+	'''Sets bulletin entry position if it is not set'''
+	if instance.position is None:
+		instance.position = Announcement.objects.all().count()
+
+
+class ContactTable(models.Model):
+	'''A group of contacts'''
+	enabled = models.BooleanField(
+		default=True,
+		help_text="Determines if the group should be displayed or not."
+	)
+	name = models.CharField(
+		max_length=255,
+		help_text="Required. The name of the contact group. It will appear above the table on the webpage."
+	)
+	additional_notes = models.TextField(
+		blank=True,
+		help_text="Optional. Additional notes that will appear below the table on the webpage if set."
+	)
+	position = models.PositiveSmallIntegerField(
+		null=True,
+		blank=True,
+		help_text="The order the table appears on the page. Leave blank to auto-fill with next value."
+	)
+
+	def __str__(self):
+		return (
+			f'{self.name}, enabled: {self.enabled}, entry count: {self.num_entries()}, position: {self.position}'
+		)
+
+	@admin.display(description='Number of Contacts')
+	def num_entries(self):
+		'''Returns the number of contacts in the group'''
+		return self.contacts.all().count()
+
+	class Meta:
+		'''Meta class'''
+		verbose_name = 'Contact Table'
+		verbose_name_plural = 'Contact Tables'
+
+@receiver(pre_save, sender=ContactTable)
+def contact_table_pre_save(sender, instance, **kwargs):
+	'''Sets contact table position if it is not set'''
+	if instance.position is None:
+		instance.position = ContactTable.objects.all().count()
+
+
+class Contact(models.Model):
+	name = models.CharField(max_length=128, help_text="Required. The contact's name.")
+	email = models.EmailField(blank=True, help_text="Optional. The contact's email address.")
+	phone = models.CharField(max_length=20, blank=True, help_text="Optional. The contact's phone number.")
+	calling = models.CharField(max_length=128, help_text="Required. The contact's calling.")
+	position = models.PositiveSmallIntegerField(
+		null=True,
+		blank=True,
+		help_text="The position of the contact in the table on the page. Leave blank to auto-fill with next value."
+	)
+	contact_table = models.ForeignKey(
+		ContactTable,
+		null=True,
+		blank=True,
+		on_delete=models.CASCADE,
+		related_name='contacts',
+		help_text='Optional. Select which Contact Table this contact belongs to.'
+	)
+
+	def __str__(self):
+		return f'{self.name} - {self.calling}'
+
+	class Meta:
+		'''Meta class'''
+		verbose_name = 'Contact'
+		verbose_name_plural = 'Contacts'
+
+
+@receiver(pre_save, sender=Contact)
+def contact_pre_save(sender, instance, **kwargs):
+	'''Sets contact position if it is not set'''
+	if instance.position is None:
+		instance.position = Contact.objects.all().count()
