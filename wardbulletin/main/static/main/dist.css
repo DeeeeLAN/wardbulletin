@@ -2188,10 +2188,6 @@ video {
   padding: 1rem;
 }
 
-.p-1 {
-  padding: 0.25rem;
-}
-
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -2759,11 +2755,6 @@ video {
 .prose-a\:text-blue-500 :is(:where(a):not(:where([class~="not-prose"] *))) {
   --tw-text-opacity: 1;
   color: rgb(59 130 246 / var(--tw-text-opacity));
-}
-
-.prose-img\:my-4 :is(:where(img):not(:where([class~="not-prose"] *))) {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
 }
 
 @media (min-width: 640px) {
