@@ -83,6 +83,7 @@ class GeneralSettings(models.Model):
 		verbose_name = 'General Settings'
 		verbose_name_plural = 'General Settings'
 
+
 class MeetingTime(models.Model):
 	'''Manages meeting date and time'''
 	next_meeting_date = models.DateField(
@@ -117,7 +118,6 @@ class MeetingTime(models.Model):
 		'''Meta class'''
 		verbose_name = 'Meeting Times'
 		verbose_name_plural = 'Meeting Times'
-
 
 
 class BulletinGroup(models.Model):
@@ -215,13 +215,27 @@ class BulletinEntry(models.Model):
 	class Meta:
 		'''Meta class'''
 		verbose_name = 'Bulletin Entry'
-		verbose_name_plural = 'Bulletin Entries'
+		verbose_name_plural = 'All Bulletin Entries'
+
 
 @receiver(pre_save, sender=BulletinEntry)
 def bulletin_entry_pre_save(sender, instance, **kwargs):
 	'''Sets bulletin entry position if it is not set'''
 	if instance.position is None:
 		instance.position = BulletinEntry.objects.all().count()
+
+
+class ActiveBulletinEntryManager(models.Manager):
+	def get_queryset(self):
+		return super().get_queryset().filter(bulletin_group__enabled=True)
+
+
+class ActiveBulletinEntry(BulletinEntry):
+	objects = ActiveBulletinEntryManager()
+	class Meta:
+		proxy = True
+		verbose_name = 'Active Bulletin Entry'
+		verbose_name_plural = 'Active Bulletin Entries'
 
 
 class Quote(models.Model):
@@ -254,7 +268,8 @@ class Announcement(models.Model):
 		blank=True,
 		help_text="The order the announcement appears on the page. Leave blank to auto-fill with next value."
 	)
-	content = models.TextField(help_text="Supports markdown formatting")
+	content = models.TextField(help_text="Required. Supports markdown formatting")
+	name = models.CharField(max_length=128, help_text="Required. Helps you organize your announcments internally.")
 
 	class Meta:
 		'''Meta class'''
@@ -290,11 +305,8 @@ class ContactTable(models.Model):
 	)
 	raw_content = models.TextField(
 		blank=True,
-		help_text='''If the default table layout doesn't work for what you need to display, you can use
-		this field to have full control over what gets displayed. You can put markdown or HTML into this
-		field and it will be displayed directly. Any Contacts associated with the table will be ignored,
-		so you will need to add them manually to this field as well. 
-		[Learn more about markdown tables.](https://www.markdownguide.org/extended-syntax/#tables)'''
+		help_text='''Optional. Adding content here will override the default table layout. Supports
+		Markdown and HTML.'''
 	)
 
 	def __str__(self):
@@ -315,6 +327,7 @@ class ContactTable(models.Model):
 		'''Meta class'''
 		verbose_name = 'Contact Table'
 		verbose_name_plural = 'Contact Tables'
+
 
 @receiver(pre_save, sender=ContactTable)
 def contact_table_pre_save(sender, instance, **kwargs):
@@ -348,7 +361,7 @@ class Contact(models.Model):
 	class Meta:
 		'''Meta class'''
 		verbose_name = 'Contact'
-		verbose_name_plural = 'Contacts'
+		verbose_name_plural = 'All Contacts'
 
 
 @receiver(pre_save, sender=Contact)

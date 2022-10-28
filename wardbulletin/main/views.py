@@ -57,12 +57,14 @@ def index(request):
 		if gs.photos_path != '':
 			photos_path = Path(gs.photos_path)
 			if photos_path.exists() and photos_path.is_file():
-				image_path = photos_path
+				image_path = photos_path.relative_to(settings.BASE_DIR.parent / 'main' / 'static')
 				image_name = photos_path.stem
 			elif photos_path.exists() and photos_path.is_dir():
 				temple_images = [i.relative_to(settings.BASE_DIR.parent / 'main' / 'static') for i in photos_path.iterdir()]
 				image_path = choice(temple_images)
 				image_name = image_path.stem
+
+	quote_list = list(Quote.objects.filter(enabled=True))
 
 	context = get_default_context()
 	context.update({
@@ -70,7 +72,7 @@ def index(request):
 			'path': image_path,
 			'name': image_name
 		},
-		'quote': choice(list(Quote.objects.filter(enabled=True))),
+		'quote': choice(quote_list) if len(quote_list) > 0 else '',
 		'meeting_date': meeting_date,
 		'first_hour_meeting_time': first_hour_meeting_time,
 		'second_hour_meeting_time': second_hour_meeting_time,
@@ -85,7 +87,7 @@ def announcements(request):
 	'''Announcements page'''
 
 	announcement_qs = Announcement.objects.filter(enabled=True).order_by('position')
-	md_client = markdown.Markdown(extensions=['smarty', 'md_in_html', 'pymdownx.magiclink'])
+	md_client = markdown.Markdown(extensions=['smarty', 'md_in_html', 'pymdownx.magiclink', 'tables'])
 	context = get_default_context()
 	context.update({
 		'announcements': [md_client.convert(a.content) for a in announcement_qs],
@@ -96,9 +98,19 @@ def announcements(request):
 def contacts_resources(request):
 	'''Contacts/Resources page'''
 
+	md_client = markdown.Markdown(extensions=['smarty', 'md_in_html', 'pymdownx.magiclink', 'tables'])
 	context = get_default_context()
+
+	tables = ContactTable.objects.filter(enabled=True).order_by('position')
+	tables = [{
+		'heading': t.name,
+		'contacts': t.contacts.all().order_by('position'),  # type: ignore
+		'additional_notes': t.additional_notes,
+		'markdown': md_client.convert(t.raw_content) if t.raw_content else ''
+	} for t in tables]
+
 	context.update({
-		'contact_tables': ContactTable.objects.filter(enabled=True),
+		'contact_tables': tables,
 	})
 
 	return render(request, 'main/contacts-resources.html', context)

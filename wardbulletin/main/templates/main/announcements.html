@@ -6,7 +6,7 @@
   <div class="container mx-auto max-w-100vw md:max-w-[90vw] xl:max-w-6xl flex flex-col gap-12 items-center">
     <div class="font-bold text-4xl text-center w-full">Ward Announcements</div>
     {% for announcement in announcements %}
-    <div class="prose lg:prose-xl prose-{{ theme_color }} prose-a:text-blue-500 prose-headings:peer w-full">
+    <div class="prose lg:prose-xl prose-{{ theme_color }} prose-a:text-blue-500 w-full">
       {{ announcement|safe }}
     </div>
     {% endfor %}

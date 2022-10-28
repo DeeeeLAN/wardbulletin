@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 Django = "*"
+"django-admin-ordering" = "*"
 gunicorn = "*"
 mysqlclient = "*"
 markdown = "*"
