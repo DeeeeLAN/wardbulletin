@@ -9,16 +9,16 @@ class DjangoSingletonModelAdmin(admin.ModelAdmin):
 
 	def has_add_permission(self, request):
 		if self.model.objects.all().count() == 0:
-			return True
+			return True and super().has_add_permission(request)
 		return False
 
 	def has_change_permission(self, request, obj=None):
 		if self.model.objects.all().count() == 1:
-			return True
+			return True and super().has_change_permission(request, obj)
 		return False
 
 	def has_view_permission(self, request, obj=None):
-		return True
+		return True and super().has_view_permission(request, obj)
 
 	def has_delete_permission(self, request, obj=None):
 		return False

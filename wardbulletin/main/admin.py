@@ -284,7 +284,7 @@ class ContactTableAdmin(OrderableAdmin, admin.ModelAdmin):
 		'name',
 		'position',
 		'num_entries',
-		'additional_notes',
+		'additional_notes_custom_rendering',
 		'content_custom_rendering',
 		'enabled',
 	)
@@ -293,6 +293,12 @@ class ContactTableAdmin(OrderableAdmin, admin.ModelAdmin):
 	save_as = True
 	ordering_field = 'position'
 	ordering = ['position']
+
+	@admin.display(description="Additional Notes")
+	def additional_notes_custom_rendering(self, obj):
+		if len(obj.additional_notes) > 128:
+			return f'{obj.additional_notes[0:127]}...'
+		return f'{obj.additional_notes}'
 
 	@admin.display(description="Raw Content")
 	def content_custom_rendering(self, obj):
