@@ -1,14 +1,15 @@
 {% extends "main/base.html" %}
 {% load static %}
+
+{% block title %}Bulletin | {{ ward_name }}{% endblock %}
     
 {% block content %}
 <div class="w-full p-4">
   <div class="container mx-auto max-w-100vw md:max-w-[90vw] xl:max-w-6xl flex flex-col gap-6 items-center prose lg:prose-xl prose-{{ theme_color }} prose-a:text-blue-500">
-    <!-- <div class="prose lg:prose-xl prose-{{ theme_color }} prose-a:text-blue-500 w-full mx-auto xl:max-w-6xl flex flex-col gap-6 items-center"> -->
     <div class="flex flex-col sm:flex-row justify-around">
       {% if image %}
       <div class="flex flex-col sm:w-[45%]">
-        <div class="bg-{{ theme_color }}-400 w-full rounded-lg text-{{ theme_color }}-900">{{image.name}}</div>
+        <div class="bg-{{ theme_color }}-400 w-full pl-4 rounded-lg text-{{ theme_color }}-900">{{image.name}}</div>
         <div class="not-prose">
           <img class="rounded-lg object-scale-down my-4" src="{% static image.path %}" alt="{{ image.name }}" />
         </div>
@@ -27,7 +28,7 @@
       </div>
       {% endif %}
     </div>
-    <div class="font-bold text-2xl text-center">Ward Bulletin Sacrament Meeting</div>
+    <div class="font-bold text-2xl text-center">{{ ward_name }} Sacrament Meeting</div>
     {% if meeting_date and first_hour_meeting_time %}
     <div class="font-bold text-xl text-center">{{ meeting_date }} &mdash; {{ first_hour_meeting_time }} Meeting Time</div>
     {% elif meeting_date %}

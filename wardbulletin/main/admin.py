@@ -10,11 +10,13 @@ from .actions import make_enabled, make_disabled, make_inverted, change_bulletin
 class GeneralSettingsAdmin(DjangoSingletonModelAdmin):
 	'''General Settings Admin Interface'''
 	fields = [
+		'ward_name',
 		'theme_color',
 		'logo_path',
 		'photos_path',
 	]
 	list_display = (
+		'ward_name',
 		'theme_color',
 		'logo_path',
 		'photos_path',

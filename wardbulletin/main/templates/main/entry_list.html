@@ -7,7 +7,7 @@
     {% else %}
     <div class="w-full flex flex-row justify-between items-center">
       <div class="max-w-[45%]">{{ entry.title|safe }}</div>
-      <div class="max-w-[45%] text-right flex flex-col sm:flex-row justify-end items-center gap-x-2 sm:divide-x divide-brown-800 divide-solid">
+      <div class="max-w-[45%] text-right flex flex-col sm:flex-row sm:items-center justify-end gap-x-2 sm:divide-x divide-brown-800 divide-solid">
         {% if not entry.url %}
         <div class="">{{ entry.value|safe }}</div>
         {% else %}

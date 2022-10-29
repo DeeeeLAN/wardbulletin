@@ -10,6 +10,7 @@ from .models import GeneralSettings, MeetingTime, BulletinGroup, Quote, Announce
 def get_default_context():
 	gs = GeneralSettings.objects.first()
 	if gs:
+		ward_name = gs.ward_name
 		theme_color = gs.get_theme_color_display().lower()  # type: ignore
 		logo_path = Path(gs.logo_path)
 		if not logo_path.exists() or not logo_path.is_file():
@@ -17,12 +18,14 @@ def get_default_context():
 		else:
 			logo_path = logo_path.relative_to(settings.BASE_DIR.parent / 'main' / 'static')
 	else:
+		ward_name = 'Ward Bulletin'
 		theme_color = 'brown'
 		logo_path = ''
 
 	return {
+		'ward_name': ward_name,
 		'logo': logo_path,
-		'theme_color': theme_color,
+		'theme_color': theme_color
 	}
 
 # Create your views here.

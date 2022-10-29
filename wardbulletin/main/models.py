@@ -59,6 +59,7 @@ class GeneralSettings(models.Model):
 		(ROSE, 'Rose'),
 	]
 
+	ward_name = models.CharField(max_length=128, help_text="Required. It will display at the top of the main page.")
 	theme_color = models.PositiveSmallIntegerField(default=BROWN, choices=COLOR_CHOICES, help_text="Website Theme Color")
 	logo_path = models.FilePathField(
 		path=str(settings.BASE_DIR.parent / 'main' / 'static' / 'main' / 'images'),
