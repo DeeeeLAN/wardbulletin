@@ -10,18 +10,22 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-import os
+import os, sys
 from pathlib import Path
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).parents[2]
 
+env = environ.Env()
+env_file = BASE_DIR.parent / '.env'
+env.read_env(str(env_file))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'n87brMtRk_XUBjKi.8c*cYgEmdwoQF77TvQy3AiyBJg.3QAB7xLZ2MW!Ymux3phZeJ-*JP.vLsq!KYLptyBB.oi-pzJgYRpALQmJ'
+SECRET_KEY = env.str('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -77,11 +81,11 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wardbulletin',
-        'USER': 'wardbulletin',
-        'PASSWORD': 'wo_unto_the_liar',
-        'HOST': 'mysql',
-        'PORT': '3306',
+        'NAME': env.str('MYSQL_DATABASE'),
+        'USER': env.str('MYSQL_USER'),
+        'PASSWORD': env.str('MYSQL_PASSWORD'),
+        'HOST': env.str('MYSQL_HOST'),
+        'PORT': env.str('MYSQL_PORT'),
     }
 }
 
@@ -123,10 +127,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # as declared in NginX conf, it must match /opt/services/djangoapp/static/
-STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'static')
+STATIC_ROOT = BASE_DIR.parents[1] / 'static'
 
 # do the same for media files, it must match /opt/services/djangoapp/media/
-MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'media')
+MEDIA_ROOT = BASE_DIR.parents[1] / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

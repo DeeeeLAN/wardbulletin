@@ -5,5 +5,3 @@ services:
   djangoapp:
     build: 
       dockerfile: ./Dockerfile-dev
-    environment:
-      DJANGO_MODE: dev

@@ -1,0 +1,4 @@
+MYSQL_USER=wardbulletin
+MYSQL_PASSWORD=wo_unto_the_liar
+MYSQL_ROOT_PASSWORD=wo_unto_the_liar
+MYSQL_DATABASE=wardbulletin

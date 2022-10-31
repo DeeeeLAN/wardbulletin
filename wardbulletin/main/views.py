@@ -16,7 +16,7 @@ def get_default_context():
 		if not logo_path.exists() or not logo_path.is_file():
 			logo_path = ''
 		else:
-			logo_path = logo_path.relative_to(settings.BASE_DIR.parent / 'main' / 'static')
+			logo_path = logo_path.relative_to(settings.BASE_DIR / 'main' / 'static')
 	else:
 		ward_name = 'Ward Bulletin'
 		theme_color = 'brown'
@@ -60,10 +60,10 @@ def index(request):
 		if gs.photos_path != '':
 			photos_path = Path(gs.photos_path)
 			if photos_path.exists() and photos_path.is_file():
-				image_path = photos_path.relative_to(settings.BASE_DIR.parent / 'main' / 'static')
+				image_path = photos_path.relative_to(settings.BASE_DIR / 'main' / 'static')
 				image_name = photos_path.stem
 			elif photos_path.exists() and photos_path.is_dir():
-				temple_images = [i.relative_to(settings.BASE_DIR.parent / 'main' / 'static') for i in photos_path.iterdir()]
+				temple_images = [i.relative_to(settings.BASE_DIR / 'main' / 'static') for i in photos_path.iterdir()]
 				image_path = choice(temple_images)
 				image_name = image_path.stem
 

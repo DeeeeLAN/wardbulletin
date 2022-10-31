@@ -3,3 +3,4 @@
 !config
 !Pipfile
 !Pipfile.lock
+!.env

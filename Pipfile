@@ -10,6 +10,7 @@ gunicorn = "*"
 mysqlclient = "*"
 markdown = "*"
 "pymdown-extensions" = "*"
+"python-environ" = "*"
 
 [requires]
 # our Dockerfile is based on Python 3

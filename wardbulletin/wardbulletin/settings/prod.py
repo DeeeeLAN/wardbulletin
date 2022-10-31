@@ -2,15 +2,15 @@
 
 from .base import *
 
-URL = 'https://wardbulletin.com/'  # TODO: replace with correct URL
+URL = f'https://{env.str("DOMAIN")}/'
 DEBUG = False
 
-ALLOWED_HOSTS += ['.wardbulletin.com']  # TODO: replace with correct URL
+ALLOWED_HOSTS += [f'.{env.str("DOMAIN")}']
 WSGI_APPLICATION = 'wardbulletin.wsgi.prod.application'
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
-    'https://wardbulletin.com',  # TODO: replace with correct URL
+    f'https://{env.str("DOMAIN")}',
 )
 
 CSRF_COOKIE_SECURE = True
