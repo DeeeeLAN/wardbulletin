@@ -8,7 +8,9 @@ import markdown
 from .models import GeneralSettings, MeetingTime, BulletinGroup, Quote, Announcement, ContactTable
 from .temple_photos_map import temples
 
+
 def get_default_context():
+	'''Builds the initial context shared by all pages'''
 	gs = GeneralSettings.objects.first()
 	if gs:
 		ward_name = gs.ward_name
@@ -28,6 +30,17 @@ def get_default_context():
 		'logo': logo_path,
 		'theme_color': theme_color
 	}
+
+
+def get_photo_paths(root):
+	'''Recursively iterates over the provided path and returns
+	a generator list of all files in the directory'''
+	for path in root.glob('*'):
+		if path.is_file():
+			yield path
+		else:
+			yield from get_photo_paths(path)
+
 
 # Create your views here.
 def index(request):
@@ -67,7 +80,7 @@ def index(request):
 				image_name = photos_path.stem
 
 			elif photos_path.exists() and photos_path.is_dir():
-				temple_images = [i.relative_to(settings.STATIC_ROOT) for i in photos_path.iterdir()]
+				temple_images = [i.relative_to(settings.STATIC_ROOT) for i in get_photo_paths(photos_path)]
 				image_path = choice(temple_images)
 				image_name = image_path.stem
 			
