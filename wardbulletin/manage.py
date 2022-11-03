@@ -8,10 +8,9 @@ import environ
 def main():
     """Run administrative tasks."""
     env = environ.Env()
-    env_file = (environ.Path(__file__) - 1)('.env')
+    env_file = (environ.Path(__file__) - 2)('.env')
     env.read_env(env_file)
-    # os.environ.setdefault('DJANGO_SETTINGS_MODULE', f'wardbulletin.settings.{env.str("DJANGO_SETTINGS_MODULE")}')
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', f'wardbulletin.settings.dev')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', f'wardbulletin.settings.{env.str("DJANGO_SETTINGS_MODULE")}')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

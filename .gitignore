@@ -1,3 +1,6 @@
 **/env/**
 **/__pycache__/**
 .env
+passenger_wsgi.py
+stderr.log
+tmp/
