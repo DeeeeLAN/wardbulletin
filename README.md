@@ -19,7 +19,7 @@ For more detailed instructions, please see [USERS.md](USERS.md)
 Requirements for hosting:
 
 - MySQL Server
-- Python application support
+- Python application support with a recent version of Python. I don't know the minimum required version but Python 3.9+ will work for sure. I expect most Python 3 versions will be fine. 
 
 Here is an outline of the steps needed to get the website deployed. You will likely need to adjust the steps based on your exact environment.
 
@@ -28,7 +28,7 @@ Here is an outline of the steps needed to get the website deployed. You will lik
 1. Copy the code to your webserver
 1. Install pipenv with `pip install -r requirements-deploy.txt`
 1. Install the dependencies with `pipenv install`
-1. Create a `.env` file based on the `.env.example` file provided, making sure to fill int he correct details for your database
+1. Create a `.env` file based on the `.env.example` file provided, making sure to fill in the correct details for your database
 1. If you are running the wsgi appliation yourself, it might look something like this:
     - `gunicorn --bind :8000 wardbulletin.wsgi.prod:application`
     - If you are using a webhost, they likely will handle this for you, just follow their guide on running a Python application
