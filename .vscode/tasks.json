@@ -6,12 +6,18 @@
     {
       "label": "TailwindCSS Watch",
       "type": "shell",
-      "command": "./tailwindcss -i wardbulletin/main/static/main/source.css -o wardbulletin/main/static/main/dist.css --watch"
+      "command": "./tailwindcss -i wardbulletin/main/static/main/source.css -o wardbulletin/main/static/main/dist.css --watch",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     },
     {
       "label": "TailwindCSS Minify",
       "type": "shell",
-      "command": "./tailwindcss -i wardbulletin/main/static/main/source.css -o wardbulletin/main/static/main/dist.css --minify"
+      "command": "./tailwindcss -i wardbulletin/main/static/main/source.css -o wardbulletin/main/static/main/dist.css --minify",
+      "problemMatcher": []
     }
   ]
 }
