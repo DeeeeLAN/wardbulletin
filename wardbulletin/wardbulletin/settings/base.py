@@ -127,10 +127,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # as declared in NginX conf, it must match /opt/services/djangoapp/static/
-STATIC_ROOT = BASE_DIR.parents[1] / 'static'
-
-# do the same for media files, it must match /opt/services/djangoapp/media/
-MEDIA_ROOT = BASE_DIR.parents[1] / 'media'
+if env.str('STATIC_PATH') == '':
+    STATIC_ROOT = BASE_DIR.parents[1] / 'static'
+else:
+    STATIC_ROOT = env.str('STATIC_PATH')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

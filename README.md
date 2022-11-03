@@ -45,7 +45,6 @@ Here is an outline of the steps needed to get the website deployed. You will lik
     - `python manage.py collectstatic` - Collects the static files for Django
     - `python manage.py check --deploy`, and take care of any issues reported
 1. Log into the admin interface at your chosen admin URL in the `.env` file
-1. The django migration will pre-load the quotes table - you can modify the contents if desired, or leave it as-is. 
 1. You don't need to expose all the tables to your bulletin editors - I recommend creating a permissions group and settings permissions for just the tables they need to access.
 1. Create user accounts for anybody who needs access to the admin interface, and assign permissions as needed.
 1. Go through the tables and set up your initial data as desired.
