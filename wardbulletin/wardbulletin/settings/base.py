@@ -130,7 +130,7 @@ STATIC_URL = 'static/'
 if env.str('STATIC_PATH') == '':
     STATIC_ROOT = BASE_DIR.parents[1] / 'static'
 else:
-    STATIC_ROOT = env.str('STATIC_PATH')
+    STATIC_ROOT = Path(env.str('STATIC_PATH'))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

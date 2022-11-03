@@ -1,6 +1,5 @@
 '''main page models'''
 import datetime
-from pathlib import Path
 from django.db import models
 from django.db.models.signals import pre_save
 from django.contrib import admin
@@ -63,13 +62,13 @@ class GeneralSettings(models.Model):
 	ward_name = models.CharField(max_length=128, help_text="Required. It will display at the top of the main page.")
 	theme_color = models.PositiveSmallIntegerField(default=BROWN, choices=COLOR_CHOICES, help_text="Website Theme Color")
 	logo_path = models.FilePathField(
-		path=str(Path(settings.STATIC_ROOT) / 'main' / 'images'),
+		path=str(settings.STATIC_ROOT / 'main' / 'images'),
 		blank=True,
 		recursive=True,
 		help_text='''Path to the logo displayed in the top-left corner of the webpage.
 		If not provided, the corner will be left blank.''')
 	photos_path = models.FilePathField(
-		path=str(Path(settings.STATIC_ROOT) / 'main' / 'images'),
+		path=str(settings.STATIC_ROOT / 'main' / 'images'),
 		blank=True,
 		allow_folders=True,
 		recursive=True,
