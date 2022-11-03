@@ -23,7 +23,8 @@ Requirements for hosting:
 
 Here is an outline of the steps needed to get the website deployed. You will likely need to adjust the steps based on your exact environment.
 
-1. Download the latest relase of the repository
+1. Make sure you have your domain and hosting purchased and configured. This is outside the scope of this project, but if you have any questions about how I set my site up, feel free to ask on the discussions page
+1. Download the latest release of the repository
 1. Copy the code to your webserver
 1. Install pipenv with `pip install -r requirements-deploy.txt`
 1. Install the dependencies with `pipenv install`
