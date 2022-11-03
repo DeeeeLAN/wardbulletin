@@ -60,10 +60,10 @@ def index(request):
 		if gs.photos_path != '':
 			photos_path = Path(gs.photos_path)
 			if photos_path.exists() and photos_path.is_file():
-				image_path = photos_path.relative_to(settings.BASE_DIR / 'main' / 'static')
+				image_path = photos_path.relative_to(settings.STATIC_ROOT)
 				image_name = photos_path.stem
 			elif photos_path.exists() and photos_path.is_dir():
-				temple_images = [i.relative_to(settings.BASE_DIR / 'main' / 'static') for i in photos_path.iterdir()]
+				temple_images = [i.relative_to(settings.STATIC_ROOT) for i in photos_path.iterdir()]
 				image_path = choice(temple_images)
 				image_name = image_path.stem
 
