@@ -63,10 +63,12 @@
         <div class="max-w-[50%]">Ward Council Members and Resources</div>
         <a class="text-blue-500 underline underline-offset-2 max-w-[50%] text-right" href="/contacts-resources">Countacts/Resources</a>
       </div>
+      {% if subscribe_email %}
       <div class="w-full flex flex-row justify-between">
         <div class="max-w-[50%]">Subscribe to the Ward Midweek Email List</div>
-        <a class="text-blue-500 underline underline-offset-2 max-w-[50%] text-right" href="mailto:wardbulletin@gmail.com?subject=Subscribe to the Ward Midweek Email List">Subscribe to Midweek Emails</a>
+        <a class="text-blue-500 underline underline-offset-2 max-w-[50%] text-right" href="mailto:{{ subscribe_email }}?subject=Subscribe to the Ward Midweek Email List">Subscribe to Midweek Emails</a>
       </div>
+      {% endif %}
     </div>
   </div>
 </div>

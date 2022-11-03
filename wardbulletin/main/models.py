@@ -74,6 +74,7 @@ class GeneralSettings(models.Model):
 		recursive=True,
 		help_text='''Path to the directory containing the photos that will be displayed
 		randomly on the homepage. If not provided, the quote will be lonely.''')
+	subscribe_email = models.EmailField(blank=True, help_text="Optional. If you have a mid-week email list, add the contact here so people can subscribe.")
 
 
 	def __str__(self):

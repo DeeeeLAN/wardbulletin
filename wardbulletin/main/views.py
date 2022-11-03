@@ -56,13 +56,16 @@ def index(request):
 
 	image_path = ''
 	image_name = ''
+	subscribe_email = ''
 	gs = GeneralSettings.objects.first()
 	if gs:
 		if gs.photos_path != '':
 			photos_path = Path(gs.photos_path)
+
 			if photos_path.exists() and photos_path.is_file():
 				image_path = photos_path.relative_to(settings.STATIC_ROOT)
 				image_name = photos_path.stem
+
 			elif photos_path.exists() and photos_path.is_dir():
 				temple_images = [i.relative_to(settings.STATIC_ROOT) for i in photos_path.iterdir()]
 				image_path = choice(temple_images)
@@ -71,6 +74,8 @@ def index(request):
 			rename = [t for t in temples if t['key'] == image_name]
 			if len(rename) == 1:
 				image_name = rename[0]['name']
+
+		subscribe_email = gs.subscribe_email
 
 	quote_list = list(Quote.objects.filter(enabled=True))
 
@@ -87,6 +92,7 @@ def index(request):
 		'sacrament_meeting_entries': sacrament_meeting_entries,
 		'sunday_school_entries': sunday_school_entries,
 		'relief_society_and_priesthood_entries': relief_society_and_priesthood_entries,
+		'subscribe_email': subscribe_email,
 	})
 	return render(request, 'main/index.html', context)
 

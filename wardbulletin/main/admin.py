@@ -14,12 +14,14 @@ class GeneralSettingsAdmin(DjangoSingletonModelAdmin):
 		'theme_color',
 		'logo_path',
 		'photos_path',
+		'subscribe_email',
 	]
 	list_display = (
 		'ward_name',
 		'theme_color',
 		'logo_path',
 		'photos_path',
+		'subscribe_email',
 	)
 
 
