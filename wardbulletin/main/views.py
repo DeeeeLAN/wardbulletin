@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.conf import settings
 import markdown
 from .models import GeneralSettings, MeetingTime, BulletinGroup, Quote, Announcement, ContactTable
+from .temple_photos_map import temples
 
 def get_default_context():
 	gs = GeneralSettings.objects.first()
@@ -66,6 +67,10 @@ def index(request):
 				temple_images = [i.relative_to(settings.STATIC_ROOT) for i in photos_path.iterdir()]
 				image_path = choice(temple_images)
 				image_name = image_path.stem
+			
+			rename = [t for t in temples if t['key'] == image_name]
+			if len(rename) == 1:
+				image_name = rename[0]['name']
 
 	quote_list = list(Quote.objects.filter(enabled=True))
 
