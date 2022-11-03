@@ -29,13 +29,17 @@ Here is an outline of the steps needed to get the website deployed. You will lik
 1. Install pipenv with `pip install -r requirements-deploy.txt`
 1. Install the dependencies with `pipenv install`
 1. Create a `.env` file based on the `.env.example` file provided, making sure to fill int he correct details for your database
-1. TODO: Instructions for getting django running with gunicorn
+1. If you are running the wsgi appliation yourself, it might look something like this:
+    - `gunicorn --bind :8000 wardbulletin.wsgi.prod:application`
+    - If you are using a webhost, they likely will handle this for you, just follow their guide on running a Python application
 1. In the wardBulletin directory, run:
     - `python manage.py makemigrations` - Prepares any missing migrations
     - `python manage.py migrate` - Creates the database configuration
     - `python manage.py createsuperuser` - Creates an admin user account
 1. Upload a logo to `wardbulletin/main/static/main/images/logos` if you want a logo in the top-left corner of the page
 1. Modify or replace the folder of temple photos at `wardbulletin/main/static/main/images/temples` as you see fit.
+1. Import the quote_data.json file into the quote table (unless you plan on using your own quotes)
+    - `python manage.py loaddata ../quote_data.json`
 1. In the root of the folder, run `./tailwindcss -i wardbulletin/main/static/main/source.css -o wardbulletin/main/static/main/dist.css --minify`
 1. In the wardBulletin directory, run:
     - `python manage.py collectstatic` - Collects the static files for Django
