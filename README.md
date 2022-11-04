@@ -1,6 +1,10 @@
 # Ward Bulletin
 
-A ward bulletin website with a Django backend and custom admin application for easy management.
+A ward bulletin website with a Django backend and custom admin application for easy management. Fully customize the page to meet your needs without touching any code.
+
+![Main Page Example](md_images/main_page_example.png "Main Page Example")
+
+![Main Page Example Corresponding Admin Interface](md_images/main_page_example_admin.png "Main Page Example Corresponding Admin Interface")
 
 #### Table of Contents
 - [Users](#users)
