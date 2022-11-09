@@ -16,7 +16,7 @@
         {% endif %}
         {% if quote %}
         <div class="flex flex-col gap-4 items-end px-4 py-4">
-          <div class="italic font-serif text-base">{{ quote.quote }}</div>
+          <div class="italic font-serif text-base">{{ quote.quote|linebreaks }}</div>
           {% if quote.url %}
           <div class="w-max italic font-serif text-base">&mdash;&nbsp;<a class="text-blue-500 underline underline-offset-2" href="{{ quote.url }}">{{quote.source}}</a></div>
           {% else %}
