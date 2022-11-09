@@ -1,0 +1,66 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block title %}Sacrament Program | {{ ward_name }}{% endblock %}
+    
+{% block content %}
+<div class="w-full p-4 pb-24 min-h-[calc(100vh-17rem)]">
+  <div class="container mx-auto max-w-100vw md:max-w-[90vw] xl:max-w-6xl flex flex-col gap-6 items-center prose lg:prose-xl prose-{{ theme_color }} prose-a:text-blue-500">
+    <div class="flex flex-col gap-6 bg-{{ theme_color }}-400 py-6 px-12 rounded-lg text-{{ theme_color }}-900">
+      <div class="font-bold text-4xl text-center">{{ ward_name }} Sacrament Meeting</div>
+      {% if meeting_date and first_hour_meeting_time %}
+      <div class="font-bold text-2xl text-center">{{ meeting_date }} &mdash; {{ first_hour_meeting_time }} Meeting Time</div>
+      {% elif meeting_date %}
+      <div class="font-bold text-2xl text-center">{{ meeting_date }}</div>
+      {% elif first_hour_meeting_time %}
+      <div class="font-bold text-2xl text-center">{{ first_hour_meeting_time }} Meeting Time</div>
+      {% endif %}
+    </div>
+    <div class="flex flex-col sm:flex-row gap-4 sm:gap-0 justify-around  bg-{{ theme_color }}-100 p-6 rounded-lg">
+      {% if image.path %}
+      <div class="flex flex-col sm:w-[35%]">
+        <div class="not-prose">
+          <img class="rounded-lg object-scale-down mb-4" src="{% static image.path %}" alt="{{ image.name }}" />
+        </div>
+        <div class="bg-{{ theme_color }}-400 w-full pl-4 rounded-lg text-{{ theme_color }}-900">{{image.name}}</div>
+      </div>
+      {% endif %}
+      {% if quote %}
+      <div class="sm:w-[35%] flex flex-col justify-center">
+        {% if image.path %}
+        <div class="flex flex-col gap-4 items-end pl-4 py-2 border-l-8 border-l-{{ theme_color }}-400 rounded-2xl">
+        {% else %}
+        <div class="flex flex-col gap-4 items-end px-4 py-4 border-x-8 border-x-{{ theme_color }}-400 rounded-2xl">
+        {% endif %}
+          <div class="italic font-serif text-base">{{ quote.quote }}</div>
+          {% if quote.url %}
+          <div class="w-max italic font-serif text-base">&mdash;&nbsp;<a class="text-blue-500 underline underline-offset-2" href="{{ quote.url }}">{{quote.source}}</a></div>
+          {% else %}
+          <div class="w-max italic font-serif text-base">&mdash;&nbsp;{{ quote.source }}</div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% include "main/entry_list.html" with entry_list=sacrament_meeting_entries %}
+    {% if sunday_school_entries or relief_society_and_priesthood_entries %}
+      <div class="w-full border-b border-{{ theme_color }}-400"></div>
+      {% if second_hour_meeting_time %}
+      <div class="font-bold text-2xl text-center">Second Hour {{ second_hour_meeting_time }}</div>
+      {% else %}
+      <div class="font-bold text-2xl text-center">Second Hour</div>
+      {% endif %}
+      {% if this_week %}
+      <div class="font-bold text-xl text-center">This Week: {{ meeting_date }}<br>Sunday School</div>
+      {% include "main/entry_list.html" with entry_list=sunday_school_entries %}
+      {% endif %}
+      <div class="font-bold text-xl text-center">{% if this_week %}Following Week: {% else %}This Week: {{ meeting_date }}<br>{% endif %}Relief Society and Priesthood</div>
+      {% include "main/entry_list.html" with entry_list=relief_society_and_priesthood_entries %}
+      {% if not this_week %}
+      <div class="font-bold text-xl text-center">Following Week: Sunday School</div>
+      {% include "main/entry_list.html" with entry_list=sunday_school_entries %}
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

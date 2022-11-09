@@ -8,6 +8,26 @@ from django.conf import settings
 
 # Create your models here.
 
+class Quote(models.Model):
+	enabled = models.BooleanField(
+		default=True,
+		help_text="Determines if the quote should be added to the display rotation."
+	)
+	source = models.CharField(max_length=128, help_text="Required. The source of the quote.")
+	quote = models.TextField(help_text="Required. The quote content.")
+	url = models.CharField(max_length=255, default='', blank=True, help_text="Optional. The optional URL of the quote. If included, will add a hyperlink to the source field under the quote on the program page.")
+
+	def __str__(self):
+		if len(self.quote) > 32:
+			return f'{self.source} - {self.quote[0:31]}...'
+		return f'{self.source} - {self.quote}'
+
+	class Meta:
+		'''Meta class'''
+		verbose_name = 'Quote'
+		verbose_name_plural = 'Quotes'
+
+
 class GeneralSettings(models.Model):
 	'''General Website Settings'''
 	SLATE = 1
@@ -73,7 +93,24 @@ class GeneralSettings(models.Model):
 		allow_folders=True,
 		recursive=True,
 		help_text='''Path to the directory containing the photos that will be displayed
-		randomly on the homepage. If not provided, the quote will be lonely.''')
+		randomly on the program page. If not provided, the quote will be lonely.''')
+	homepage_photo = models.FilePathField(
+		path=str(settings.STATIC_ROOT / 'main' / 'images'),
+		blank=True,
+		recursive=True,
+		help_text='''Path to the photo to be displayed on the homepage.
+		If not provided, the hompage will re-center the content without the image.''')
+	alternate_homepage_photo = models.ImageField(
+		upload_to='media',
+		blank=True,
+		help_text='''Upload a photo here to set an alternate photo for the homepage.''')
+	homepage_quote = models.ForeignKey(
+		Quote,
+		null=True,
+		blank=True,
+		on_delete=models.SET_NULL,
+		help_text='''Select which quote in the quote table you want displayed under the picture on the homepage.
+		Disabled quotes are allowed. If not provided, no quote will be displayed on the homepage.''')
 	subscribe_email = models.EmailField(blank=True, help_text="Optional. If you have a mid-week email list, add the contact here so people can subscribe.")
 
 
@@ -96,12 +133,13 @@ class MeetingTime(models.Model):
 	)
 	first_hour_meeting_time = models.CharField(max_length=8, help_text='Required. Your Sacrament Meeting meeting time.')
 	second_hour_meeting_time = models.CharField(max_length=8, help_text='Required. Your classes meeting time.')
+	meetinghouse_address = models.TextField(blank=True, help_text='Optional. Will display on the homepage if entered. Try and format it using 2-3 lines of text.')
 
 	def get_next_meeting_date(self):
 		'''Returns the next sunday, or next_meeting_date if
 		it is set and after next_sunday'''
 		current_day = datetime.datetime.now(datetime.timezone.utc)
-		next_sunday = current_day + datetime.timedelta(days=6-current_day.weekday())
+		next_sunday = (current_day + datetime.timedelta(days=6-current_day.weekday())).date()
 
 		if self.next_meeting_date is None:
 			return next_sunday.strftime('%B %d, %Y')
@@ -193,6 +231,11 @@ class BulletinEntry(models.Model):
 		blank=True,
 		help_text="Optional. If included, will show up to the right of the Value field, outside the hyperlink (for example, the hymn number next to the hymn name)."
 	)
+	raw_content = models.TextField(
+		blank=True,
+		help_text='''Optional. Adding content here will override the default row,
+		and the rest of the fields will be ignored. Supports Markdown and HTML.'''
+	)
 
 	def __str__(self):
 		return f'{self.title}{": " if self.value else ""}{self.value}'
@@ -238,26 +281,6 @@ class ActiveBulletinEntry(BulletinEntry):
 		proxy = True
 		verbose_name = 'Active Bulletin Entry'
 		verbose_name_plural = 'Active Bulletin Entries'
-
-
-class Quote(models.Model):
-	enabled = models.BooleanField(
-		default=True,
-		help_text="Determines if the quote should be added to the display rotation."
-	)
-	source = models.CharField(max_length=128, help_text="Required. The source of the quote.")
-	quote = models.TextField(help_text="Required. The quote content.")
-	url = models.CharField(max_length=255, default='', blank=True, help_text="Optional. The optional URL of the quote. If included, will add a hyperlink to the source field under the quote on the homepage.")
-
-	def __str__(self):
-		if len(self.quote) > 32:
-			return f'{self.source} - {self.quote[0:31]}...'
-		return f'{self.source} - {self.quote}'
-
-	class Meta:
-		'''Meta class'''
-		verbose_name = 'Quote'
-		verbose_name_plural = 'Quotes'
 
 
 class Announcement(models.Model):

@@ -1,74 +1,51 @@
 {% extends "main/base.html" %}
 {% load static %}
 
-{% block title %}Bulletin | {{ ward_name }}{% endblock %}
+{% block title %}Home | {{ ward_name }}{% endblock %}
     
 {% block content %}
-<div class="w-full p-4">
+<div class="w-full p-4 min-h-[calc(100vh-17rem)] flex items-center">
   <div class="container mx-auto max-w-100vw md:max-w-[90vw] xl:max-w-6xl flex flex-col gap-6 items-center prose lg:prose-xl prose-{{ theme_color }} prose-a:text-blue-500">
-    <div class="flex flex-col sm:flex-row justify-around">
-      {% if image.path %}
-      <div class="flex flex-col sm:w-[45%]">
-        <div class="bg-{{ theme_color }}-400 w-full pl-4 rounded-lg text-{{ theme_color }}-900">{{image.name}}</div>
+    <div class="w-full flex flex-col sm:flex-row-reverse gap-6">
+      {% if image.path or quote %}
+      <div class="w-full sm:w-1/2 flex flex-col items-center">
+        {% if image.path %}
         <div class="not-prose">
-          <img class="rounded-lg object-scale-down my-4" src="{% static image.path %}" alt="{{ image.name }}" />
+          <img class="rounded-lg object-scale-down" src="{% if media %}{{ image.path }}{% else %}{% static image.path %}{% endif %}" alt="{{ image.name }}" />
         </div>
+        {% endif %}
+        {% if quote %}
+        <div class="flex flex-col gap-4 items-end px-4 py-4">
+          <div class="italic font-serif text-base">{{ quote.quote }}</div>
+          {% if quote.url %}
+          <div class="w-max italic font-serif text-base">&mdash;&nbsp;<a class="text-blue-500 underline underline-offset-2" href="{{ quote.url }}">{{quote.source}}</a></div>
+          {% else %}
+          <div class="w-max italic font-serif text-base">&mdash;&nbsp;{{ quote.source }}</div>
+          {% endif %}
+        </div>
+        {% endif %}
       </div>
       {% endif %}
-      {% if quote %}
-      <div class="sm:w-[45%] flex flex-col justify-center">
-        {% if image.path %}
-        <div class="flex flex-col gap-4 items-end pl-4 py-2 border-l-8 border-l-{{ theme_color }}-400 rounded-2xl">
-        {% else %}
-        <div class="flex flex-col gap-4 items-end px-4 py-4 border-x-8 border-x-{{ theme_color }}-400 rounded-2xl">
+      <div class="w-full {% if image.path or quote %}sm:w-1/2{% endif %} flex flex-col items-center justify-center gap-6 bg-{{ theme_color }}-400 py-6 px-12 rounded-lg text-{{ theme_color }}-900">
+        <div class="font-bold text-4xl text-center">{{ ward_name }}</div>
+        <div class="font-bold text-2xl text-center">Welcome!</div>
+        <div class="font-bold text-2xl text-center">Worship with us each Sunday at {{ first_hour_meeting_time }}. {% if address %}Our meetinghouse is located at:{% endif %}</div>
+        {% if address %}
+        <a href="http://maps.apple.com/?address={{ address.split|join:' ' }}">
+          <div class="flex flex-col items-center">
+            <div class="text-center font-bold">{{ address|linebreaks }}</div>
+          </div>
+        </a>
         {% endif %}
-          <div class="italic font-serif">{{quote.quote}}</div>
-          {% if quote.url %}
-          <div class="w-max italic font-serif">&mdash;&nbsp;<a class="text-blue-500 underline underline-offset-2" href="{{ quote.url }}">{{quote.source}}</a></div>
-          {% else %}
-          <div class="w-max italic font-serif">&mdash;&nbsp;{{quote.source}}</div>
+        <div class="grid grid-cols-1 gap-4 w-80 not-prose">
+          <a class="" href="{% url 'program' %}"><div class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">Sunday Program</div></a>
+          <a class="" href="{% url 'announcements' %}"><div class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">Announcements</div></a>
+          <a class="" href="{% url 'contacts-resources' %}"><div class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">Contacts &amp; Resources</div></a>
+          {% if subscribe_email %}
+          <a class="" href="mailto:{{ subscribe_email }}?subject=Subscribe to the Ward Midweek Email List"><div class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">Subscribe to Midweek Emails</div></a>
           {% endif %}
         </div>
       </div>
-      {% endif %}
-    </div>
-    <div class="font-bold text-2xl text-center">{{ ward_name }} Sacrament Meeting</div>
-    {% if meeting_date and first_hour_meeting_time %}
-    <div class="font-bold text-xl text-center">{{ meeting_date }} &mdash; {{ first_hour_meeting_time }} Meeting Time</div>
-    {% elif meeting_date %}
-    <div class="font-bold text-xl text-center">{{ meeting_date }}</div>
-    {% elif first_hour_meeting_time %}
-    <div class="font-bold text-xl text-center">{{ first_hour_meeting_time }} Meeting Time</div>
-    {% endif %}
-    {% include "main/entry_list.html" with entry_list=sacrament_meeting_entries %}
-    <div class="w-full border-b border-{{ theme_color }}-400"></div>
-    {% if second_hour_meeting_time %}
-    <div class="font-bold text-2xl text-center">Second Hour {{ second_hour_meeting_time }}</div>
-    {% else %}
-    <div class="font-bold text-2xl text-center">Second Hour</div>
-    {% endif %}
-    <div class="font-bold text-xl text-center">Sunday School</div>
-    <span class="">1<sup>st</sup>, 3<sup>rd</sup> & 5<sup>th</sup> Sundays</span>
-    {% include "main/entry_list.html" with entry_list=sunday_school_entries %}
-    <div class="font-bold text-xl text-center">Relief Society and Priesthood</div>
-    <span class="">2<sup>nd</sup> & 4<sup>th</sup> Sundays</span>
-    {% include "main/entry_list.html" with entry_list=relief_society_and_priesthood_entries %}
-    <div class="font-bold text-xl text-center">Additional Information</div>
-    <div class="w-full flex flex-col gap-3">
-      <div class="w-full flex flex-row justify-between">
-        <div class="max-w-[50%]">Ward Announcements and Information</div>
-        <a class="text-blue-500 underline underline-offset-2 max-w-[50%] text-right" href="/announcements">Announcements</a>
-      </div>
-      <div class="w-full flex flex-row justify-between">
-        <div class="max-w-[50%]">Ward Council Members and Resources</div>
-        <a class="text-blue-500 underline underline-offset-2 max-w-[50%] text-right" href="/contacts-resources">Countacts/Resources</a>
-      </div>
-      {% if subscribe_email %}
-      <div class="w-full flex flex-row justify-between">
-        <div class="max-w-[50%]">Subscribe to the Ward Midweek Email List</div>
-        <a class="text-blue-500 underline underline-offset-2 max-w-[50%] text-right" href="mailto:{{ subscribe_email }}?subject=Subscribe to the Ward Midweek Email List">Subscribe to Midweek Emails</a>
-      </div>
-      {% endif %}
     </div>
   </div>
 </div>

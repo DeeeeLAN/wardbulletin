@@ -14,15 +14,11 @@ class GeneralSettingsAdmin(DjangoSingletonModelAdmin):
 		'theme_color',
 		'logo_path',
 		'photos_path',
+		'homepage_photo',
+		'alternate_homepage_photo',
+		'homepage_quote',
 		'subscribe_email',
 	]
-	list_display = (
-		'ward_name',
-		'theme_color',
-		'logo_path',
-		'photos_path',
-		'subscribe_email',
-	)
 
 
 class MeetingTimeAdmin(DjangoSingletonModelAdmin):
@@ -31,12 +27,8 @@ class MeetingTimeAdmin(DjangoSingletonModelAdmin):
 		'first_hour_meeting_time',
 		'second_hour_meeting_time',
 		'next_meeting_date',
+		'meetinghouse_address',
 	]
-	list_display = (
-		'first_hour_meeting_time',
-		'second_hour_meeting_time',
-		'next_meeting_date',
-	)
 
 
 class BulletinEntryAdmin(OrderableAdmin, admin.ModelAdmin):
@@ -57,6 +49,7 @@ class BulletinEntryAdmin(OrderableAdmin, admin.ModelAdmin):
 				'url',
 				'additional_note',
 				'enabled',
+				'raw_content',
 				'section',
 				'bulletin_group',
 			)
@@ -91,6 +84,7 @@ class BulletinEntryInline(OrderableAdmin, admin.TabularInline):
 	'''Bulletin Entry Inline Admin Interface'''
 	model = BulletinEntry
 	ordering_field = 'position'
+	ordering = ['position']
 	extra = 0
 	fields = (
 		'position',
@@ -209,6 +203,7 @@ class AnnouncementAdmin(OrderableAdmin, admin.ModelAdmin):
 class ContactsInline(OrderableAdmin, admin.TabularInline):
 	model = Contact
 	ordering_field = 'position'
+	ordering = ['position']
 	extra = 0
 	fields = (
 		'position',
