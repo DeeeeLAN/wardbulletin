@@ -101,7 +101,7 @@ class GeneralSettings(models.Model):
 		help_text='''Path to the photo to be displayed on the homepage.
 		If not provided, the hompage will re-center the content without the image.''')
 	alternate_homepage_photo = models.ImageField(
-		upload_to='media',
+		upload_to='',
 		blank=True,
 		help_text='''Upload a photo here to set an alternate photo for the homepage.''')
 	homepage_quote = models.ForeignKey(
