@@ -65,7 +65,7 @@ def index(request):
 		if gs.alternate_homepage_photo != '':
 			photo_path = Path(gs.alternate_homepage_photo.url)
 
-			image_path = photo_path
+			image_path = f'media{photo_path}'
 			image_name = '_'.join(photo_path.stem.split('_')[:-1])
 			media = True
 				
