@@ -111,8 +111,8 @@ If you are able to host a docker instance for production use, remove the `docker
 Use the following commands to manage the tailwind css files
 
 ```bash
-./tailwindcss -i wardbulletin/main/static/main/source.css -o wardbulletin/main/static/main/dist.css --watch # Have this running while editing the code
-./tailwindcss -i wardbulletin/main/static/main/source.css -o wardbulletin/main/static/main/dist.css --minify
+./tailwindcss -i source.css -o wardbulletin/main/static/main/css/dist-all.css --watch # Have this running while editing the code
+./tailwindcss -i source.css -o wardbulletin/main/static/main/css/dist-all.css --minify
 ```
 
 If you add any new css classes that follow the color theme, like `bg-{{ color }}-500` or whatever, make sure you update the enumerated set of classes at the bottom of `wardbulletin/main/templates/main/base.html`. This will allow the `tailwindcss` script to pick up the needed styles and include them in the `dist.css` file.

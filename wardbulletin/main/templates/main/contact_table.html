@@ -1,7 +1,7 @@
 
 
 {% if table %}
-<div class="font-bold text-3xl text-start w-full">{{ table.heading }}</div>
+<div class="font-bold text-3xl text-start w-full text-{{ theme_color }}-900">{{ table.heading }}</div>
 <div class="prose lg:prose-xl prose-{{ theme_color }} prose-a:text-blue-500 w-full">
   {% if not table.markdown %}
   <table class="table-auto">

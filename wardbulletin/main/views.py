@@ -25,10 +25,13 @@ def get_default_context():
 		theme_color = 'brown'
 		logo_path = ''
 
+	css_file = 'all' if settings.DEBUG else theme_color
+
 	return {
 		'ward_name': ward_name,
 		'logo': logo_path,
-		'theme_color': theme_color
+		'theme_color': theme_color,
+		'css_file': css_file,
 	}
 
 

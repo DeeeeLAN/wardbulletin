@@ -1,5 +1,5 @@
 {% if entry_list %}
-<div class="w-full flex flex-col gap-3">
+<div class="w-full flex flex-col gap-7">
   {% for entry in entry_list %}
     {% if entry.raw_content %}
       <div class="w-full flex flex-col items-center py-6">
@@ -10,16 +10,16 @@
       <div class="w-full flex flex-row justify-center py-6">
         <div class="">{{ entry.title|safe }}</div>
       {% else %}
-      <div class="w-full flex flex-row justify-between items-center">
-        <div class="max-w-[45%]">{{ entry.title|safe }}</div>
-        <div class="max-w-[45%] text-right flex flex-col sm:flex-row sm:items-center justify-end gap-x-2 sm:divide-x divide-brown-800 divide-solid">
+      <div class="w-full flex flex-row justify-between items-center gap-6">
+        <div class="max-w-[50%]">{{ entry.title|safe }}</div>
+        <div class="max-w-[50%] text-right flex flex-col sm:flex-row gap-x-2 sm:divide-x divide-{{ theme_color }}-800 divide-solid">
           {% if not entry.url %}
-          <div class="">{{ entry.value|safe }}</div>
+          <div class="flex items-center justify-end">{{ entry.value|safe }}</div>
           {% else %}
-          <div class=""><a class="text-blue-500 underline underline-offset-2" href="{{ entry.url }}">{{ entry.value|safe }}</a></div>
+          <div class="flex items-center justify-end"><a class="" href="{{ entry.url }}">{{ entry.value|safe }}</a></div>
           {% endif %}
           {% if entry.additional_note|safe %}
-          <div class="pl-2">{{ entry.additional_note|safe }}</div>
+          <div class="pl-2 flex items-center justify-end text-sm italic text-{{ theme_color }}-600">{{ entry.additional_note|safe }}</div>
           {% endif %}
         </div>
       {% endif %}
