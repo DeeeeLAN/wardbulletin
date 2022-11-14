@@ -215,7 +215,7 @@ class ContactsInline(OrderableAdmin, admin.TabularInline):
 
 
 class ContactAdmin(OrderableAdmin, admin.ModelAdmin):
-	'''Contact Admin Interface'''
+	'''Contact Admin Interface (Unused)'''
 	fieldsets = (
 		(None, {
 			'fields': (),
@@ -309,9 +309,7 @@ class ContactTableAdmin(OrderableAdmin, admin.ModelAdmin):
 admin.site.register(GeneralSettings, GeneralSettingsAdmin)
 admin.site.register(MeetingTime, MeetingTimeAdmin)
 admin.site.register(BulletinGroup, BulletinGroupAdmin)
-admin.site.register(BulletinEntry, BulletinEntryAdmin)
 admin.site.register(ActiveBulletinEntry, BulletinEntryAdmin)
 admin.site.register(Quote, QuoteAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
-admin.site.register(Contact, ContactAdmin)
 admin.site.register(ContactTable, ContactTableAdmin)
