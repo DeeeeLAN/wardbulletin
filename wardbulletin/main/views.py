@@ -37,6 +37,8 @@ header_theme_color_map = dict(
 	rose    = '#fecdd3',
 )
 
+md_client = markdown.Markdown(extensions=['smarty', 'md_in_html', 'pymdownx.magiclink', 'tables', 'nl2br'])
+
 def get_default_context():
 	'''Builds the initial context shared by all pages'''
 	gs = GeneralSettings.objects.first()
@@ -129,7 +131,6 @@ def index(request):
 def program(request):
 	'''Program page'''
 
-	md_client = markdown.Markdown(extensions=['smarty', 'md_in_html', 'pymdownx.magiclink', 'tables'])
 
 	bulletin_entries = None
 	bulletin_group = BulletinGroup.objects.filter(enabled=True).first()
@@ -163,13 +164,21 @@ def program(request):
 
 	image_path = ''
 	image_name = ''
+	media = False
 	first_hour_meeting_time = None
 	second_hour_meeting_time = None
 	meeting_date = None
 	this_week = None
 	gs = GeneralSettings.objects.first()
 	if gs:
-		if gs.photos_path != '':
+		if gs.alternate_photo != '':
+			photo_path = Path(gs.alternate_photo.url)
+
+			image_path = f'media{photo_path}'
+			image_name = '_'.join(photo_path.stem.split('_')[:-1])
+			media = True
+
+		elif gs.photos_path != '':
 			photos_path = Path(gs.photos_path)
 
 			if photos_path.exists() and photos_path.is_file():
@@ -199,6 +208,7 @@ def program(request):
 			'path': image_path,
 			'name': image_name
 		},
+		'media': media,
 		'quote': choice(quote_list) if len(quote_list) > 0 else '',
 		'meeting_date': meeting_date,
 		'first_hour_meeting_time': first_hour_meeting_time,
@@ -213,9 +223,10 @@ def program(request):
 def announcements(request):
 	'''Announcements page'''
 
-	announcement_qs = Announcement.objects.filter(enabled=True).order_by('position')
-	md_client = markdown.Markdown(extensions=['smarty', 'md_in_html', 'pymdownx.magiclink', 'tables'])
 	context = get_default_context()
+
+	announcement_qs = Announcement.objects.filter(enabled=True).order_by('position')
+	
 	context.update({
 		'announcements': [md_client.convert(a.content) for a in announcement_qs],
 	})
@@ -225,7 +236,6 @@ def announcements(request):
 def contacts_resources(request):
 	'''Contacts/Resources page'''
 
-	md_client = markdown.Markdown(extensions=['smarty', 'md_in_html', 'pymdownx.magiclink', 'tables'])
 	context = get_default_context()
 
 	tables = ContactTable.objects.filter(enabled=True).order_by('position')
