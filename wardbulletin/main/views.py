@@ -8,6 +8,31 @@ import markdown
 from .models import GeneralSettings, MeetingTime, BulletinGroup, Quote, Announcement, ContactTable
 from .temple_photos_map import temples
 
+header_theme_color_map = dict(
+	slate   = '#e2e8f0',
+	gray    = '#e5e7eb',
+	zinc    = '#e4e4e7',
+	neutral = '#e5e5e5',
+	stone   = '#e7e5e4',
+	brown   = '#eaddd7',
+	red     = '#fecaca',
+	orange  = '#fed7aa',
+	amber   = '#fde68a',
+	yellow  = '#fef08a',
+	lime    = '#d9f99d',
+	green   = '#bbf7d0',
+	emerald = '#a7f3d0',
+	teal    = '#99f6e4',
+	cyan    = '#a5f3fc',
+	sky     = '#bae6fd',
+	blue    = '#bfdbfe',
+	indigo  = '#c7d2fe',
+	violet  = '#ddd6fe',
+	purple  = '#e9d5ff',
+	fuchsia = '#f5d0fe',
+	pink    = '#fbcfe8',
+	rose    = '#fecdd3',
+)
 
 def get_default_context():
 	'''Builds the initial context shared by all pages'''
@@ -27,10 +52,13 @@ def get_default_context():
 
 	css_file = 'all' if settings.DEBUG else theme_color
 
+	header_theme_color = header_theme_color_map[theme_color]
+
 	return {
 		'ward_name': ward_name,
 		'logo': logo_path,
 		'theme_color': theme_color,
+		'header_theme_color': header_theme_color,
 		'css_file': css_file,
 	}
 
