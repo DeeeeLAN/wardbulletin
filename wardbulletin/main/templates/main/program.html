@@ -43,23 +43,20 @@
       {% endif %}
     </div>
     {% include "main/entry_list.html" with entry_list=sacrament_meeting_entries %}
-    {% if sunday_school_entries or relief_society_and_priesthood_entries %}
+    {% if class_entries %}
       <div class="w-full border-b border-{{ theme_color }}-400"></div>
       {% if second_hour_meeting_time %}
       <div class="font-bold text-2xl text-center">Second Hour {{ second_hour_meeting_time }}</div>
       {% else %}
       <div class="font-bold text-2xl text-center">Second Hour</div>
       {% endif %}
-      {% if this_week %}
-      <div class="font-bold text-xl text-center">This Week: {{ meeting_date }}<br>Sunday School</div>
-      {% include "main/entry_list.html" with entry_list=sunday_school_entries %}
-      {% endif %}
-      <div class="font-bold text-xl text-center">{% if this_week %}Following Week: {% else %}This Week: {{ meeting_date }}<br>{% endif %}Relief Society and Priesthood</div>
-      {% include "main/entry_list.html" with entry_list=relief_society_and_priesthood_entries %}
-      {% if not this_week %}
-      <div class="font-bold text-xl text-center">Following Week: Sunday School</div>
-      {% include "main/entry_list.html" with entry_list=sunday_school_entries %}
-      {% endif %}
+      {% for entry in class_entries %}
+      <div class="flex flex-col gap-1">
+        <div class="font-bold text-xl text-center">{{ entry.title|safe }}</div>
+        <div class="font-bold text-xl text-center">{{ entry.schedule_date }}</div>
+      </div>
+      {% include "main/entry_list.html" with entry_list=entry.entries %}
+      {% endfor %}
     {% endif %}
   </div>
 </div>

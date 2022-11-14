@@ -1,9 +1,9 @@
 '''Main site admin interfaces'''
 from django.contrib import admin
 from admin_ordering.admin import OrderableAdmin
-from .models import GeneralSettings, MeetingTime, BulletinEntry, ActiveBulletinEntry, BulletinGroup, Quote, Announcement, Contact, ContactTable
+from .models import GeneralSettings, BulletinEntry, ActiveBulletinEntry, BulletinGroup, ClassEntry, ClassSchedule, Quote, Announcement, Contact, ContactTable
 from .singleton_admin import DjangoSingletonModelAdmin
-from .actions import make_enabled, make_disabled, make_inverted, change_bulletin_group
+from .actions import make_enabled, make_disabled, make_inverted, change_bulletin_group, change_class_schedule
 
 # Register your models here.
 
@@ -12,22 +12,17 @@ class GeneralSettingsAdmin(DjangoSingletonModelAdmin):
 	fields = [
 		'ward_name',
 		'theme_color',
-		'logo_path',
-		'photos_path',
-		'homepage_photo',
-		'alternate_homepage_photo',
-		'homepage_quote',
-		'subscribe_email',
-	]
-
-
-class MeetingTimeAdmin(DjangoSingletonModelAdmin):
-	'''Meeting Time Admin Interface'''
-	fields = [
 		'first_hour_meeting_time',
 		'second_hour_meeting_time',
 		'next_meeting_date',
 		'meetinghouse_address',
+		'logo_path',
+		'photos_path',
+		'alternate_photo',
+		'homepage_photo',
+		'alternate_homepage_photo',
+		'homepage_quote',
+		'subscribe_email',
 	]
 
 
@@ -36,10 +31,7 @@ class BulletinEntryAdmin(OrderableAdmin, admin.ModelAdmin):
 	fieldsets = (
 		(None, {
 			'fields': (),
-			'description': '''All of the bulletin entries are contained can be edited
-			directly through this interface, if needed. It is easier to edit the bulletin
-			entries within a bulletin group directly, but this will allow you to manage
-			the entries as needed.'''
+			'description': '''Edit an individual bulletin entry with this interface.'''
 		}),
 		(None, {
 			'fields': (
@@ -50,7 +42,6 @@ class BulletinEntryAdmin(OrderableAdmin, admin.ModelAdmin):
 				'additional_note',
 				'enabled',
 				'raw_content',
-				'section',
 				'bulletin_group',
 			)
 		})
@@ -62,7 +53,6 @@ class BulletinEntryAdmin(OrderableAdmin, admin.ModelAdmin):
 		'url',
 		'additional_note',
 		'enabled',
-		'section',
 		'bulletin_group',
 	)
 	list_display_links = ('title',)
@@ -72,7 +62,6 @@ class BulletinEntryAdmin(OrderableAdmin, admin.ModelAdmin):
 		'url',
 		'additional_note',
 		'enabled',
-		'section',
 		'bulletin_group',
 	)
 	ordering_field = 'position'
@@ -88,7 +77,6 @@ class BulletinEntryInline(OrderableAdmin, admin.TabularInline):
 	extra = 0
 	fields = (
 		'position',
-		'section',
 		'title',
 		'value',
 		'url',
@@ -122,6 +110,101 @@ class BulletinGroupAdmin(admin.ModelAdmin):
 		'enabled',
 	)
 	list_editable = ('enabled',)
+	actions = [make_enabled, make_disabled, make_inverted]
+	save_as = True
+
+
+class ClassEntryAdmin(OrderableAdmin, admin.ModelAdmin):
+	'''Class Entry Admin Interface'''
+	fieldsets = (
+		(None, {
+			'fields': (),
+			'description': '''Edit an individual class entry with this interface.'''
+		}),
+		(None, {
+			'fields': (
+				'position',
+				'title',
+				'value',
+				'url',
+				'additional_note',
+				'enabled',
+				'raw_content',
+				'class_schedule',
+			)
+		})
+	)
+	list_display = (
+		'position',
+		'title',
+		'value',
+		'url',
+		'additional_note',
+		'enabled',
+		'class_schedule',
+	)
+	list_display_links = ('title',)
+	list_editable = (
+		'position',
+		'value',
+		'url',
+		'additional_note',
+		'enabled',
+		'class_schedule',
+	)
+	ordering_field = 'position'
+	ordering = ['position']
+	actions = [make_enabled, make_disabled, make_inverted, change_class_schedule]
+
+
+class ClassEntryInline(OrderableAdmin, admin.TabularInline):
+	'''Class Entry Inline Admin Interface'''
+	model = ClassEntry
+	ordering_field = 'position'
+	ordering = ['position']
+	extra = 0
+	fields = (
+		'position',
+		'title',
+		'value',
+		'url',
+		'additional_note',
+		'enabled',
+		'class_schedule',
+	)
+
+
+class ClassScheduleAdmin(OrderableAdmin, admin.ModelAdmin):
+	'''Class Schedule Group Admin Interface'''
+	fieldsets = (
+		(None, {
+			'fields': (),
+			'description': '''The main class schedule editor. Manage all the associated class entries: 
+			add new, modify, or reorder entries associated with this group from here. Use the <i>Save As</i>
+			Button at the bottom to duplicate an existing group, along with all of its associated entries.
+			Make sure to modify the group after duplicating it!'''
+		}),
+		(None, {
+			'fields': (
+				'position',
+				'title',
+				'schedule_date',
+				'enabled',
+			)
+		})
+	)
+	inlines = [ClassEntryInline]
+	list_display = (
+		'position',
+		'title',
+		'schedule_date',
+		'num_classes',
+		'enabled',
+	)
+	list_display_links = ('title',)
+	list_editable = ('position', 'schedule_date', 'enabled',)
+	ordering_field = 'position'
+	ordering = ['position']
 	actions = [make_enabled, make_disabled, make_inverted]
 	save_as = True
 
@@ -307,9 +390,9 @@ class ContactTableAdmin(OrderableAdmin, admin.ModelAdmin):
 
 
 admin.site.register(GeneralSettings, GeneralSettingsAdmin)
-admin.site.register(MeetingTime, MeetingTimeAdmin)
 admin.site.register(BulletinGroup, BulletinGroupAdmin)
 admin.site.register(ActiveBulletinEntry, BulletinEntryAdmin)
+admin.site.register(ClassSchedule, ClassScheduleAdmin)
 admin.site.register(Quote, QuoteAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
 admin.site.register(ContactTable, ContactTableAdmin)

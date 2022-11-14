@@ -93,3 +93,72 @@ def change_bulletin_group(modeladmin, request, queryset):
 		"admin/change_bulletin_group.html",
 		context,
 	)
+	
+@admin.action(permissions=['change'], description=gettext_lazy("Change Class Schedule"))
+def change_class_schedule(modeladmin, request, queryset):
+
+	opts = modeladmin.model._meta
+
+	if request.POST.get("post"):
+
+		queryset.update(class_schedule=request.POST.get("group"))
+		# logger.warning(queryset)
+		messages.add_message(request, messages.INFO, f'Updated {queryset.count()} Class Entry schedules')
+
+		# Return None to display the change list page again.
+		return None
+
+	objects_name = model_ngettext(queryset)
+
+	title = _("Select new Class Schedule")
+
+	def format_callback(obj):
+		model = obj.__class__
+		has_admin = model in admin.site._registry
+		opts = obj._meta
+
+		no_edit_link = "%s: %s" % (capfirst(opts.verbose_name), obj)
+
+		if has_admin:
+			try:
+				admin_url = reverse(
+					f"{admin.site.name}:{opts.app_label}_{opts.model_name}_change",
+					None,
+					(quote(obj.pk),),
+				)
+			except NoReverseMatch:
+				# Change url doesn't exist -- don't display link to edit
+				return no_edit_link
+
+			# Display a link to the admin page.
+			return format_html(
+				'{}: <a href="{}">{}</a>', capfirst(opts.verbose_name), admin_url, obj
+			)
+		else:
+			# Don't display link to edit, because it either has no
+			# admin or is edited inline.
+			return no_edit_link
+
+	to_update = [format_callback(obj) for obj in queryset]
+
+	context = {
+		**modeladmin.admin_site.each_context(request),
+		"title": title,
+		"subtitle": None,
+		"objects_name": str(objects_name),
+		"groups": BulletinGroup.objects.all(),
+		"update_objects": to_update,
+		"queryset": queryset,
+		"opts": opts,
+		"action_checkbox_name": helpers.ACTION_CHECKBOX_NAME,
+		"media": modeladmin.media,
+	}
+
+	request.current_app = modeladmin.admin_site.name
+
+	# Display the confirmation page
+	return TemplateResponse(
+		request,
+		"admin/change_class_schedule.html",
+		context,
+	)

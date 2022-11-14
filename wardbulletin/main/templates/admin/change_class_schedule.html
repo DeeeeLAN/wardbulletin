@@ -1,0 +1,37 @@
+{% extends "admin/change_bulletin_group.html" %}
+{% load i18n l10n admin_urls static %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+&rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+&rsaquo; {% translate 'Change Class Schedule' %}
+</div>
+{% endblock %}
+
+{% block content %}
+  <p>{% blocktranslate %}The following {{ objects_name }} will be updated to be a member of the selected Class Schedule Group{% endblocktranslate %}</p>
+  {% comment %} {% include "admin/includes/object_delete_summary.html" %} {% endcomment %}
+  <h2>{% translate "Objects" %}</h2>
+  <ul>{{ update_objects|unordered_list }}</ul>
+  <h2>{% translate "Schedule Group" %}</h2>
+  <form method="post">{% csrf_token %}
+    <div class="form-row">
+      <select name="group" id="group">
+        {% for group in groups %}
+        <option value="{{ group.pk|unlocalize }}">{{ group.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-row">
+      {% for obj in queryset %}
+      <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}">
+      {% endfor %}
+      <input type="hidden" name="action" value="change_class_schedule">
+      <input type="hidden" name="post" value="yes">
+      <input type="submit" value="{% translate 'Yes, I’m sure' %}">
+      <a href="#" class="button cancel-link">{% translate "No, take me back" %}</a>
+    </div>
+  </form>
+{% endblock %}

@@ -5,8 +5,11 @@ from pathlib import Path
 from django.shortcuts import render
 from django.conf import settings
 import markdown
-from .models import GeneralSettings, MeetingTime, BulletinGroup, Quote, Announcement, ContactTable
+from .models import GeneralSettings, BulletinGroup, ClassSchedule, Quote, Announcement, ContactTable
 from .temple_photos_map import temples
+import logging 
+
+logger = logging.getLogger(__name__) 
 
 header_theme_color_map = dict(
 	slate   = '#e2e8f0',
@@ -77,20 +80,13 @@ def get_photo_paths(root):
 def index(request):
 	'''Index page'''
 
-	mt = MeetingTime.objects.first()
-	if mt:
-		first_hour_meeting_time = mt.first_hour_meeting_time
-		address = mt.meetinghouse_address
-	else:
-		first_hour_meeting_time = None
-		address = None
-
-
 	image_path = ''
 	image_name = ''
 	quote = ''
 	subscribe_email = ''
 	media = False
+	first_hour_meeting_time = None
+	address = None
 	gs = GeneralSettings.objects.first()
 	if gs:
 		if gs.alternate_homepage_photo != '':
@@ -111,6 +107,8 @@ def index(request):
 			quote = gs.homepage_quote
 
 		subscribe_email = gs.subscribe_email
+		first_hour_meeting_time = gs.first_hour_meeting_time
+		address = gs.meetinghouse_address
 
 
 	context = get_default_context()
@@ -131,47 +129,44 @@ def index(request):
 def program(request):
 	'''Program page'''
 
-	mt = MeetingTime.objects.first()
-	if mt:
-		first_hour_meeting_time = mt.first_hour_meeting_time
-		second_hour_meeting_time = mt.second_hour_meeting_time
-		meeting_date = mt.get_next_meeting_date()
-		this_week = ((datetime.datetime.strptime(meeting_date, '%B %d, %Y').day - 1) // 7 + 1) % 2
-
-	else:
-		first_hour_meeting_time = None
-		second_hour_meeting_time = None
-		meeting_date = None
-		this_week = None
-
 	md_client = markdown.Markdown(extensions=['smarty', 'md_in_html', 'pymdownx.magiclink', 'tables'])
 
-
-	sacrament_meeting_entries = None
-	sunday_school_entries = None
-	relief_society_and_priesthood_entries = None
+	bulletin_entries = None
 	bulletin_group = BulletinGroup.objects.filter(enabled=True).first()
 	if bulletin_group:
 		bulletin_entries = bulletin_group.bulletinEntries.filter(enabled=True).order_by('position')  # type: ignore
 		if bulletin_entries:
-			sacrament_meeting_entries = bulletin_entries.filter(section=1)
-			for e in sacrament_meeting_entries:
+			for e in bulletin_entries:
 				if e.raw_content != '':
 					e.raw_content = md_client.convert(e.raw_content)
 
-			sunday_school_entries = bulletin_entries.filter(section=2)
-			for e in sunday_school_entries:
-				if e.raw_content != '':
-					e.raw_content = md_client.convert(e.raw_content)
 
-			relief_society_and_priesthood_entries = bulletin_entries.filter(section=3)
-			for e in relief_society_and_priesthood_entries:
-				if e.raw_content != '':
-					e.raw_content = md_client.convert(e.raw_content)
+	class_entries = []
+	class_groups = ClassSchedule.objects.filter(enabled=True).order_by('position')
+	if class_groups:
+		for group in class_groups:
+			group_info = dict(
+				title=group.title,
+				schedule_date='',
+				entries=[]
+			)
+			if group.schedule_date:
+				group_info['schedule_date'] = group.schedule_date.strftime('%B %d, %Y')
 
+			classes = group.classEntries.filter(enabled=True).order_by('position')
+			for c in classes:
+				if c.raw_content != '':
+					c.raw_content = md_client.convert(c.raw_content)
+			group_info['entries'] = classes
+
+			class_entries.append(group_info)
 
 	image_path = ''
 	image_name = ''
+	first_hour_meeting_time = None
+	second_hour_meeting_time = None
+	meeting_date = None
+	this_week = None
 	gs = GeneralSettings.objects.first()
 	if gs:
 		if gs.photos_path != '':
@@ -189,6 +184,11 @@ def program(request):
 			rename = [t for t in temples if t['key'] == image_name]
 			if len(rename) == 1:
 				image_name = rename[0]['name']
+		
+		first_hour_meeting_time = gs.first_hour_meeting_time
+		second_hour_meeting_time = gs.second_hour_meeting_time
+		meeting_date = gs.get_next_meeting_date()
+		this_week = ((datetime.datetime.strptime(meeting_date, '%B %d, %Y').day - 1) // 7 + 1) % 2
 
 
 	quote_list = list(Quote.objects.filter(enabled=True))
@@ -204,9 +204,8 @@ def program(request):
 		'first_hour_meeting_time': first_hour_meeting_time,
 		'second_hour_meeting_time': second_hour_meeting_time,
 		'this_week': this_week,
-		'sacrament_meeting_entries': sacrament_meeting_entries,
-		'sunday_school_entries': sunday_school_entries,
-		'relief_society_and_priesthood_entries': relief_society_and_priesthood_entries,
+		'sacrament_meeting_entries': bulletin_entries,
+		'class_entries': class_entries,
 	})
 	return render(request, 'main/program.html', context)
 

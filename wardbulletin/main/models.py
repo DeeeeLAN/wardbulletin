@@ -81,6 +81,15 @@ class GeneralSettings(models.Model):
 
 	ward_name = models.CharField(max_length=128, help_text="Required. It will display at the top of the main page.")
 	theme_color = models.PositiveSmallIntegerField(default=BROWN, choices=COLOR_CHOICES, help_text="Website Theme Color")
+	next_meeting_date = models.DateField(
+		null=True,
+		blank=True,
+		help_text='''Optional. The website automatically displays the next Sunday for the meeting date.
+			Set a value here to override the next meeting date.'''
+	)
+	first_hour_meeting_time = models.CharField(max_length=8, help_text='Required. Your Sacrament Meeting meeting time.')
+	second_hour_meeting_time = models.CharField(max_length=8, help_text='Required. Your classes meeting time.')
+	meetinghouse_address = models.TextField(blank=True, help_text='Optional. Will display on the homepage if entered. Try and format it using 2-3 lines of text.')
 	logo_path = models.FilePathField(
 		path=str(settings.STATIC_ROOT / 'main' / 'images'),
 		blank=True,
@@ -94,6 +103,10 @@ class GeneralSettings(models.Model):
 		recursive=True,
 		help_text='''Path to the directory containing the photos that will be displayed
 		randomly on the program page. If not provided, the quote will be lonely.''')
+	alternate_photo = models.ImageField(
+		upload_to='',
+		blank=True,
+		help_text='''Upload a photo here to set an alternate photo for the program.''')
 	homepage_photo = models.FilePathField(
 		path=str(settings.STATIC_ROOT / 'main' / 'images'),
 		blank=True,
@@ -117,24 +130,6 @@ class GeneralSettings(models.Model):
 	def __str__(self):
 		return "General Settings"
 
-	class Meta:
-		'''Meta class'''
-		verbose_name = 'General Settings'
-		verbose_name_plural = 'General Settings'
-
-
-class MeetingTime(models.Model):
-	'''Manages meeting date and time'''
-	next_meeting_date = models.DateField(
-		null=True,
-		blank=True,
-		help_text='''Optional. The website automatically displays the next Sunday for the meeting date.
-			Set a value here to override the next meeting date.'''
-	)
-	first_hour_meeting_time = models.CharField(max_length=8, help_text='Required. Your Sacrament Meeting meeting time.')
-	second_hour_meeting_time = models.CharField(max_length=8, help_text='Required. Your classes meeting time.')
-	meetinghouse_address = models.TextField(blank=True, help_text='Optional. Will display on the homepage if entered. Try and format it using 2-3 lines of text.')
-
 	def get_next_meeting_date(self):
 		'''Returns the next sunday, or next_meeting_date if
 		it is set and after next_sunday'''
@@ -150,14 +145,10 @@ class MeetingTime(models.Model):
 		return self.next_meeting_date.strftime('%B %d, %Y')
 
 
-	def __str__(self):
-		return "Meeting Times"
-
-
 	class Meta:
 		'''Meta class'''
-		verbose_name = 'Meeting Times'
-		verbose_name_plural = 'Meeting Times'
+		verbose_name = 'General Settings'
+		verbose_name_plural = 'General Settings'
 
 
 class BulletinGroup(models.Model):
@@ -186,29 +177,13 @@ class BulletinGroup(models.Model):
 
 class BulletinEntry(models.Model):
 	'''Rows of the bulletin'''
-	SACRAMENT_MEETING = 1
-	SUNDAY_SCHOOL = 2
-	RELIEF_SOCIETY_AND_PRIESTHOOD = 3
-	SECTION_CHOICES = [
-		(SACRAMENT_MEETING, 'Sacrament Meeting'),
-		(SUNDAY_SCHOOL, 'Sunday School'),
-		(RELIEF_SOCIETY_AND_PRIESTHOOD, 'Relief Society and Priesthood')
-	]
-
 	bulletin_group = models.ForeignKey(
 		BulletinGroup,
-		null=True,
-		blank=True,
 		on_delete=models.CASCADE,
 		related_name='bulletinEntries',
-		help_text='Optional. Select which Bulletin Group this entry belongs to.'
+		help_text='Required. Select which Bulletin Group this entry belongs to.'
 	)
 	enabled = models.BooleanField(default=True, help_text="Determines if the row should be displayed on the page.")
-	section = models.PositiveSmallIntegerField(
-		default=SACRAMENT_MEETING,
-		choices=SECTION_CHOICES,
-		help_text="Required. The page section to appear in."
-	)
 	position = models.PositiveSmallIntegerField(
 		null=True,
 		blank=True,
@@ -248,7 +223,6 @@ class BulletinEntry(models.Model):
 		return (
 			f'\n{"-" * (longest + 22)}\n' + 
 			f'|         Enabled | {self.enabled:<{longest}} |\n' +
-			f'|         Section | {self.section:<{longest}} |\n' +
 			f'|        Position | {self.position:<{longest}} |\n' +
 			f'|           Title | {self.title:<{longest}} |\n' +
 			f'|           Value | {self.value:<{longest}} |\n' +
@@ -267,7 +241,7 @@ class BulletinEntry(models.Model):
 def bulletin_entry_pre_save(sender, instance, **kwargs):
 	'''Sets bulletin entry position if it is not set'''
 	if instance.position is None:
-		instance.position = BulletinEntry.objects.all().count()
+		instance.position = (BulletinEntry.objects.all().count() + 1) * 10
 
 
 class ActiveBulletinEntryManager(models.Manager):
@@ -281,6 +255,115 @@ class ActiveBulletinEntry(BulletinEntry):
 		proxy = True
 		verbose_name = 'Active Bulletin Entry'
 		verbose_name_plural = 'Active Bulletin Entries'
+
+
+class ClassSchedule(models.Model):
+	'''A list of class schedule groups'''
+	position = models.PositiveSmallIntegerField(
+		null=True,
+		blank=True,
+		help_text="The order the group will appear on the program if multiple groups are enabled")
+	enabled = models.BooleanField(
+		default=False,
+		help_text="Determines if the group should be displayed or not.")
+	title = models.CharField(max_length=255, help_text="The title for the class schedule group. It is displayed at the top of the list of classes on the program.")
+	schedule_date = models.DateField(
+		null=True,
+		blank=True,
+		help_text='''Optional. If included, will appear below the title on the program.'''
+	)
+
+	def __str__(self):
+		return (
+			f'{self.title}, date: {self.schedule_date}, enabled: {self.enabled}, class count: {self.num_classes()}'
+		)
+
+	@admin.display(description='Number of Classes in the Group')
+	def num_classes(self):
+		'''Returns the number of classes in the group'''
+		return self.classEntries.all().count()  # type: ignore
+
+	class Meta:
+		'''Meta class'''
+		verbose_name = 'Class Schedule'
+		verbose_name_plural = 'Class Schedules'
+
+
+@receiver(pre_save, sender=ClassSchedule)
+def class_schedule_pre_save(sender, instance, **kwargs):
+	'''Sets class schedule position if it is not set'''
+	if instance.position is None:
+		instance.position = (ClassSchedule.objects.all().count() + 1) * 10
+
+
+class ClassEntry(models.Model):
+	'''Rows in a class schedule group'''
+
+	class_schedule = models.ForeignKey(
+		'ClassSchedule',
+		on_delete=models.CASCADE,
+		related_name='classEntries',
+		help_text='Required. Select which Class Schedule Group this entry belongs to.'
+	)
+	enabled = models.BooleanField(default=True, help_text="Determines if the row should be displayed on the page.")
+	position = models.PositiveSmallIntegerField(
+		null=True,
+		blank=True,
+		help_text="The order the entry appears within the group. Leave blank to auto-fill with next value."
+	)
+	title = models.CharField(
+		max_length=128,
+		help_text="Required. Without a value, will center on the page. With a value included, will be left-justified."
+	)
+	value = models.CharField(
+		max_length=128,
+		default='',
+		blank=True,
+		help_text="Optional. If added, will right-justify in-line with the (now left-justified) title."
+	)
+	url = models.CharField(max_length=255, null=True, blank=True, help_text="Optional. If added, will add a hyperlink to the Value field.", verbose_name="URL")
+	additional_note = models.CharField(
+		max_length=128,
+		default='',
+		blank=True,
+		help_text="Optional. If included, will show up to the right of the Value field, outside the hyperlink (for example, the class meeting location)."
+	)
+	raw_content = models.TextField(
+		blank=True,
+		help_text='''Optional. Adding content here will override the default row,
+		and the rest of the fields will be ignored. Supports Markdown and HTML.'''
+	)
+
+	def __str__(self):
+		return f'{self.title}{": " if self.value else ""}{self.value}'
+
+	def table_view(self):
+		longest = 0
+		for field in self._meta.get_fields():  # type: ignore
+			longest = max(longest, len(str(getattr(self, field.name))))
+
+		return (
+			f'\n{"-" * (longest + 22)}\n' + 
+			f'|         Enabled | {self.enabled:<{longest}} |\n' +
+			f'|        Position | {self.position:<{longest}} |\n' +
+			f'|           Title | {self.title:<{longest}} |\n' +
+			f'|           Value | {self.value:<{longest}} |\n' +
+			f'|             URL | {self.url:<{longest}} |\n' +
+			f'| Additional Note | {self.additional_note:<{longest}} |\n' +
+			f'{"-" * (longest + 22)}\n'
+		)
+
+	class Meta:
+		'''Meta class'''
+		verbose_name = 'Class Entry'
+		verbose_name_plural = 'All Class Entries'
+
+
+@receiver(pre_save, sender=ClassEntry)
+def class_entry_pre_save(sender, instance, **kwargs):
+	'''Sets class entry position if it is not set'''
+	if instance.position is None:
+		instance.position = (ClassEntry.objects.all().count() + 1) * 10
 
 
 class Announcement(models.Model):
@@ -306,7 +389,7 @@ class Announcement(models.Model):
 def announcement_pre_save(sender, instance, **kwargs):
 	'''Sets bulletin entry position if it is not set'''
 	if instance.position is None:
-		instance.position = Announcement.objects.all().count()
+		instance.position = (Announcement.objects.all().count() + 1) * 10
 
 
 class ContactTable(models.Model):
@@ -358,7 +441,7 @@ class ContactTable(models.Model):
 def contact_table_pre_save(sender, instance, **kwargs):
 	'''Sets contact table position if it is not set'''
 	if instance.position is None:
-		instance.position = ContactTable.objects.all().count()
+		instance.position = (ContactTable.objects.all().count() + 1) * 10
 
 
 class Contact(models.Model):
@@ -373,11 +456,9 @@ class Contact(models.Model):
 	)
 	contact_table = models.ForeignKey(
 		ContactTable,
-		null=True,
-		blank=True,
 		on_delete=models.CASCADE,
 		related_name='contacts',
-		help_text='Optional. Select which Contact Table this contact belongs to.'
+		help_text='Required. Select which Contact Table this contact belongs to.'
 	)
 
 	def __str__(self):
@@ -393,4 +474,4 @@ class Contact(models.Model):
 def contact_pre_save(sender, instance, **kwargs):
 	'''Sets contact position if it is not set'''
 	if instance.position is None:
-		instance.position = Contact.objects.all().count()
+		instance.position = (Contact.objects.all().count() + 1) * 10
