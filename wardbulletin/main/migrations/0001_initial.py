@@ -6,8 +6,6 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [('main', '0001_squashed_0038_bulletinentry_raw_content'), ('main', '0039_alter_generalsettings_alternate_homepage_photo_and_more'), ('main', '0040_delete_meetingtime_remove_bulletinentry_section_and_more'), ('main', '0041_classschedule_classentry'), ('main', '0042_alter_classentry_additional_note_and_more'), ('main', '0043_classschedule_schedule_date')]
-
     initial = True
 
     dependencies = [
