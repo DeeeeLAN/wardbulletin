@@ -11,7 +11,7 @@ PyMySQL = "*"
 markdown = "*"
 "pymdown-extensions" = "*"
 "python-environ" = "*"
-Pillow = "==8.0.0"
+Pillow = "==9.4.0"
 
 [requires]
 # our Dockerfile is based on Python 3
