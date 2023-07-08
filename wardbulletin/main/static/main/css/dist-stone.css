@@ -1334,6 +1334,10 @@ video {
   max-width: 50%;
 }
 
+.max-w-none {
+  max-width: none;
+}
+
 .table-auto {
   table-layout: auto;
 }
