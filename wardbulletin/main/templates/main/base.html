@@ -13,12 +13,14 @@
   </head>
   <body class="bg-{{ theme_color }}-50">
 
-    <div class="bg-{{ theme_color }}-200 w-full px-4">
-      <div
-        class="container mx-auto max-w-6xl h-full flex flex-row items-center justify-between gap-4 md:max-w-[80vw]">
+    <header class="bg-{{ theme_color }}-200">
+      <nav
+        class="mx-auto flex max-w-7xl items-center justify-between px-4 lg:px-8"
+        aria-label="Global">
         {% if logo %}
         <div class="h-20 py-1">
           <a class href="{% url 'index' %}">
+            <span class="sr-only">Ward Bulletin</span>
             <img class="object-scale-down max-h-full m-auto"
               src="{% static logo %}" alt="Logo" />
           </a>
@@ -26,6 +28,7 @@
         {% else %}
         <div class="h-20 py-1">
           <a class href="{% url 'index' %}">
+            <span class="sr-only">Ward Bulletin</span>
             <div class="flex flex-row items-center gap-2 h-full">
               <!-- Designed by Nico Bökenkröger from Noun Project -->
               <svg class="fill-{{ theme_color }}-800" width="5rem"
@@ -61,68 +64,122 @@
           </a>
         </div>
         {% endif %}
-        <div class="hidden sm:flex flex-row items-center gap-4">
-          <a
-            class="hover:text-{{ theme_color }}-800 {% if request.path == '/' %}text-{{ theme_color }}-800 italic{% else %}text-{{ theme_color }}-900{% endif %}"
-            href="{% url 'index' %}">Home</a>
-          <a
-            class="hover:text-{{ theme_color }}-800 {% if request.path == '/program/' %}text-{{ theme_color }}-800 italic{% else %}text-{{ theme_color }}-900{% endif %}"
-            href="{% url 'program' %}">Sunday Program</a>
-          <a
-            class="hover:text-{{ theme_color }}-800 {% if request.path == '/announcements/' %}text-{{ theme_color }}-800 italic{% else %}text-{{ theme_color }}-900{% endif %}"
-            href="{% url 'announcements' %}">Announcements</a>
-          <a
-            class="hover:text-{{ theme_color }}-800 {% if request.path == '/contacts-resources/' %}text-{{ theme_color }}-800 italic{% else %}text-{{ theme_color }}-900{% endif %}"
-            href="{% url 'contacts-resources' %}">Contacts/Resources</a>
+        <div class="flex lg:hidden">
+          <button type="button" id="mobile-menu-open-button"
+            class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-{{ theme_color }}-700">
+            <span class="sr-only">Open main menu</span>
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
+        </div>
+        <div class="hidden lg:flex lg:gap-x-12">
+          <a href="{% url 'index' %}"
+            class="text-sm font-semibold leading-6 text-{{ theme_color }}-900">Home</a>
+          <a href="{% url 'program' %}"
+            class="text-sm font-semibold leading-6 text-{{ theme_color }}-900">Sunday
+            Program</a>
+          <a href="{% url 'announcements' %}"
+            class="text-sm font-semibold leading-6 text-{{ theme_color }}-900">Announcements</a>
+          <a href="{% url 'contacts-resources' %}"
+            class="text-sm font-semibold leading-6 text-{{ theme_color }}-900">Contacts/Resources</a>
           {% for page in more_pages %}
-          <a
-            class="hover:text-{{ theme_color }}-800 {% if request.path == page.slug %}text-{{ theme_color }}-800 italic{% else %}text-{{ theme_color }}-900{% endif %}"
-            href="{% url 'more' page.slug %}">{{ page.title }}</a>
+          <a href="{% url 'more' page.slug %}"
+            class="text-sm font-semibold leading-6 text-{{ theme_color }}-900">
+            {{ page.title }}</a>
           {% endfor %}
         </div>
-        <div class="relative flex sm:hidden">
-          <input type="checkbox" id="nav-input" class="peer hidden absolute">
-          <label for="nav-input">
-            <div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+      </nav>
+      <!-- Mobile menu, show/hide based on menu open state. -->
+      <div class="hidden lg:hidden" id="mobile-menu" role="dialog"
+        aria-modal="true">
+        <!-- Background backdrop, show/hide based on slide-over state. -->
+        <div class="fixed inset-0 z-10"></div>
+        <div
+          class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-{{ theme_color }}-50 px-4 sm:max-w-sm sm:ring-1 sm:ring-{{ theme_color }}-900/10">
+          <div class="flex items-center justify-between">
+            {% if logo %}
+            <div class="h-20 py-1">
+              <a class href="{% url 'index' %}">
+                <span class="sr-only">Ward Bulletin</span>
+                <img class="object-scale-down max-h-full m-auto"
+                  src="{% static logo %}" alt="Logo" />
+              </a>
             </div>
-          </label>
-          <div id="nav-dropdown"
-            class="invisible peer-checked:visible flex absolute right-0 top-8 bg-{{ theme_color }}-600 text-{{ theme_color }}-50 p-4 w-max rounded-xl max-h-0 overflow-hidden peer-checked:max-h-52 transition-[max-height,_padding,_visibility]">
-            <div class="flex flex-col gap-6">
-              <a
-                class="hover:text-{{ theme_color }}-50 {% if request.path == '/' %}text-{{ theme_color }}-50 italic{% else %}text-{{ theme_color }}-200{% endif %}"
-                href="{% url 'index' %}">Home</a>
-              <a
-                class="hover:text-{{ theme_color }}-50 {% if request.path == '/program/' %}text-{{ theme_color }}-50 italic{% else %}text-{{ theme_color }}-200{% endif %}"
-                href="{% url 'program' %}">Sunday Program</a>
-              <a
-                class="hover:text-{{ theme_color }}-50 {% if request.path == '/announcements/' %}text-{{ theme_color }}-50 italic{% else %}text-{{ theme_color }}-200{% endif %}"
-                href="{% url 'announcements' %}">Announcements</a>
-              <a
-                class="hover:text-{{ theme_color }}-50 {% if request.path == '/contacts-resources/' %}text-{{ theme_color }}-50 italic{% else %}text-{{ theme_color }}-200{% endif %}"
-                href="{% url 'contacts-resources' %}">Contacts/Resources</a>
-              {% for page in more_pages %}
-              <a
-                class="hover:text-{{ theme_color }}-50 {% if request.path == page.slug %}text-{{ theme_color }}-50 italic{% else %}text-{{ theme_color }}-200{% endif %}"
-                href="{% url 'more' page.slug %}">{{ page.title }}</a>
-              {% endfor %}
+            {% else %}
+            <div class="h-20 py-1">
+              <a class href="{% url 'index' %}">
+                <span class="sr-only">Ward Bulletin</span>
+                <div class="flex flex-row items-center gap-2 h-full">
+                  <!-- Designed by Nico Bökenkröger from Noun Project -->
+                  <svg class="fill-{{ theme_color }}-800" width="5rem"
+                    height="3.8rem" version="1.1" viewBox="0 0 700 570"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g>
+                      <path
+                        d="m665.73 549.77h-631.46c-9.082-0.019532-17.789-3.6367-24.211-10.059s-10.039-15.129-10.059-24.211v-464.19c0.019531-9.0859 3.6367-17.789 10.059-24.215 6.4219-6.4219 15.129-10.039 24.211-10.059h631.46c9.082 0.019531 17.789 3.6367 24.211 10.059 6.4219 6.4258 10.039 15.129 10.059 24.215v464.19c-0.019531 9.082-3.6367 17.789-10.059 24.211s-15.129 10.039-24.211 10.059zm-631.46-518.14c-5.2188 0-10.227 2.0742-13.918 5.7656-3.6953 3.6914-5.7695 8.6992-5.7695 13.922v464.19c0 5.2188 2.0742 10.227 5.7695 13.918 3.6914 3.6953 8.6992 5.7695 13.918 5.7695h631.46c5.2188 0 10.227-2.0742 13.918-5.7695 3.6953-3.6914 5.7695-8.6992 5.7695-13.918v-464.19c0-5.2227-2.0742-10.23-5.7695-13.922-3.6914-3.6914-8.6992-5.7656-13.918-5.7656z" />
+                      <path
+                        d="m633.5 496.98h-567c-5.125 0-10.039-2.0352-13.664-5.6602-3.625-3.6211-5.6602-8.5352-5.6602-13.66v-388.5c0-5.125 2.0352-10.039 5.6602-13.664s8.5391-5.6602 13.664-5.6602h567c5.125 0 10.039 2.0352 13.664 5.6602s5.6602 8.5391 5.6602 13.664v388.5c0 5.125-2.0352 10.039-5.6602 13.66-3.625 3.625-8.5391 5.6602-13.664 5.6602zm-567-412.56c-2.6172 0-4.7383 2.125-4.7383 4.7422v388.5c0 2.6172 2.1211 4.7383 4.7383 4.7383h567c2.6172 0 4.7383-2.1211 4.7383-4.7383v-388.5c0-2.6172-2.1211-4.7422-4.7383-4.7422z" />
+                      <path
+                        d="m184.84 333.43h-68.176c-3.8672 0-7.5781-1.5352-10.312-4.2695-2.7344-2.7383-4.2734-6.4453-4.2734-10.312v-136.21c0-3.8672 1.5391-7.5742 4.2734-10.312 2.7344-2.7344 6.4453-4.2695 10.312-4.2695h43.75v14.582h-43.75v136.14h68.105z" />
+                      <path
+                        d="m267.46 268.75h-14.582v-86.117h-43.75v-14.582h43.75c3.8672 0 7.5781 1.5352 10.312 4.2695 2.7344 2.7383 4.2695 6.4453 4.2695 10.312z" />
+                      <path
+                        d="m184.84 207.07c-8.4141 0-16.48-3.3438-22.43-9.293-5.9492-5.9453-9.2891-14.016-9.2891-22.426 0-8.4141 3.3398-16.48 9.2891-22.43 5.9492-5.9492 14.016-9.2891 22.43-9.2891s16.48 3.3398 22.43 9.2891c5.9492 5.9492 9.2891 14.016 9.2891 22.43 0 8.4102-3.3398 16.48-9.2891 22.426-5.9492 5.9492-14.016 9.293-22.43 9.293zm0-48.855c-4.543 0-8.9023 1.8047-12.117 5.0195-3.2148 3.2109-5.0195 7.5703-5.0195 12.117 0 4.543 1.8047 8.9023 5.0195 12.117 3.2148 3.2109 7.5742 5.0156 12.117 5.0156s8.9023-1.8047 12.117-5.0156c3.2148-3.2148 5.0195-7.5742 5.0195-12.117 0-4.5469-1.8047-8.9062-5.0195-12.117-3.2148-3.2148-7.5742-5.0195-12.117-5.0195z" />
+                      <path
+                        d="m328.12 451.26h-135.99c-3.8672 0-7.5781-1.5352-10.312-4.2695-2.7344-2.7344-4.2734-6.4453-4.2734-10.312v-136.14c0-3.8672 1.5391-7.5742 4.2734-10.312 2.7344-2.7344 6.4453-4.2695 10.312-4.2695h43.75v14.582h-43.75v136.14h135.99v-136.14h-43.75v-14.582h43.75c3.8672 0 7.5781 1.5352 10.312 4.2695 2.7344 2.7383 4.2695 6.4453 4.2695 10.312v136.14c0 3.8672-1.5352 7.5781-4.2695 10.312-2.7344 2.7344-6.4453 4.2695-10.312 4.2695z" />
+                      <path
+                        d="m260.17 324.9c-8.4297 0.058593-16.535-3.2422-22.527-9.168-5.9922-5.9297-9.3789-14-9.4102-22.43-0.035157-8.4258 3.2891-16.523 9.2383-22.496 5.9453-5.9766 14.023-9.3359 22.453-9.3438 8.4297-0.003907 16.516 3.3438 22.473 9.3086 5.9531 5.9648 9.293 14.055 9.2734 22.484-0.019531 8.3594-3.3398 16.375-9.2383 22.305-5.9023 5.9258-13.902 9.2812-22.262 9.3398zm0-48.781c-4.5586-0.058594-8.9492 1.7031-12.207 4.8906-3.2578 3.1875-5.1094 7.5391-5.1484 12.098-0.039062 4.5547 1.7383 8.9414 4.9414 12.184 3.2031 3.2422 7.5625 5.0781 12.121 5.0977 4.5547 0.019531 8.9336-1.7773 12.164-4.9922 3.2266-3.2148 5.043-7.5859 5.043-12.141 0-4.5078-1.7734-8.832-4.9414-12.043-3.1641-3.207-7.4688-5.0352-11.973-5.0938z" />
+                      <path
+                        d="m463.17 308.71c-2.1445 0-4.2617-0.47266-6.1992-1.3867-3.4258-1.7031-6.0469-4.6914-7.293-8.3125l-46.301-128.48c-1.3086-3.6445-1.1172-7.6641 0.53906-11.164 1.6562-3.5039 4.6367-6.2031 8.2852-7.5039l41.051-14.582 4.8867 13.707-40.98 14.582 45.938 128.55 128.19-46.012-46.082-128.48-41.125 14.582-4.8867-13.707 41.125-14.582c3.625-1.2734 7.6094-1.0625 11.082 0.58203 3.4297 1.707 6.0469 4.6914 7.293 8.3125l46.52 128.26c1.3203 3.625 1.1445 7.6289-0.48047 11.125-1.6289 3.5-4.5742 6.2109-8.1953 7.543l-128.41 45.719c-1.5664 0.69922-3.2461 1.1211-4.957 1.2383z" />
+                      <path
+                        d="m478.7 167.47c-9.6172-0.015625-18.711-4.3945-24.719-11.902-6.0117-7.5078-8.2891-17.34-6.1914-26.727 2.0938-9.3867 8.332-17.316 16.965-21.559 8.6328-4.2422 18.723-4.3359 27.434-0.26172 7.5234 3.6211 13.316 10.066 16.117 17.93 2.8047 7.8633 2.3945 16.52-1.1445 24.082-3.5352 7.5625-9.9102 13.43-17.742 16.32-3.4297 1.3047-7.0547 2.0195-10.719 2.1172zm0-48.855c-1.9922-0.023438-3.9688 0.32422-5.8359 1.0195-4.2812 1.5273-7.7734 4.7031-9.6953 8.8242-1.9766 4.0859-2.1875 8.8047-0.58594 13.051 2.2148 5.5586 7.1719 9.5586 13.07 10.555 5.9023 0.99219 11.895-1.1602 15.809-5.6875 3.9141-4.5234 5.1836-10.766 3.3516-16.461-1.5742-4.2539-4.7383-7.7305-8.8242-9.6953-2.2812-1.0664-4.7695-1.6133-7.2891-1.6055z" />
+                    </g>
+                  </svg>
+                  <div class="flex flex-col">
+                    <div class="uppercase text-{{ theme_color }}-600 text-lg">Ward</div>
+                    <div class="uppercase text-{{ theme_color }}-800 text-lg">Bulletin</div>
+                  </div>
+                </div>
+              </a>
+            </div>
+            {% endif %}
+            <button type="button" id="mobile-menu-close-button"
+              class="-m-2.5 rounded-md p-2.5 text-{{ theme_color }}-700">
+              <span class="sr-only">Close menu</span>
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div class="mt-6 flow-root">
+            <div class="-my-6 divide-y divide-{{ theme_color }}-500/10">
+              <div class="space-y-2 py-6">
+                <a href="{% url 'index' %}"
+                  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-{{ theme_color }}-900 hover:bg-{{ theme_color }}-50">Home</a>
+                <a href="{% url 'program' %}"
+                  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-{{ theme_color }}-900 hover:bg-{{ theme_color }}-50">Sunday
+                  Program</a>
+                <a href="{% url 'announcements' %}"
+                  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-{{ theme_color }}-900 hover:bg-{{ theme_color }}-50">Announcements</a>
+                <a href="{% url 'contacts-resources' %}"
+                  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-{{ theme_color }}-900 hover:bg-{{ theme_color }}-50">Contacts/Resources</a>
+                {% for page in more_pages %}
+                <a href="{% url 'more' page.slug %}"
+                  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-{{ theme_color }}-900 hover:bg-{{ theme_color }}-50">
+                  {{ page.title }}</a>
+                {% endfor %}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </header>
 
     {% block content %}{% endblock %}
 
@@ -149,5 +206,17 @@
       </div>
     </div>
 
+    <script>
+      const openButton = document.querySelector('#mobile-menu-open-button');
+      const closeButton = document.querySelector('#mobile-menu-close-button');
+      const menu = document.querySelector('#mobile-menu');
+
+      openButton.addEventListener('click', () => {
+        menu.classList.remove('hidden');
+      });
+      closeButton.addEventListener('click', () => {
+        menu.classList.add('hidden');
+      });
+    </script>
   </body>
 </html>
