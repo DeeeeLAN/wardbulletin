@@ -1,7 +1,7 @@
 '''Main site admin interfaces'''
 from django.contrib import admin
 from admin_ordering.admin import OrderableAdmin
-from .models import GeneralSettings, BulletinEntry, ActiveBulletinEntry, BulletinGroup, ClassEntry, ClassSchedule, Quote, Announcement, Contact, ContactTable
+from .models import GeneralSettings, BulletinEntry, ActiveBulletinEntry, BulletinGroup, ClassEntry, ClassSchedule, Quote, Announcement, Contact, ContactTable, MorePages
 from .singleton_admin import DjangoSingletonModelAdmin
 from .actions import make_enabled, make_disabled, make_inverted, change_bulletin_group, change_class_schedule
 
@@ -389,6 +389,50 @@ class ContactTableAdmin(OrderableAdmin, admin.ModelAdmin):
 		return f'{obj.raw_content}'
 
 
+class MorePagesAdmin(OrderableAdmin, admin.ModelAdmin):
+	'''More Pages Admin Interface'''
+	fieldsets = (
+		(None, {
+			'fields': (),
+			'description': '''Additional pages can be formatted easily with online editors 
+				in either <a href="https://markdown-editor.github.io/" target="_blank">Markdown</a> 
+				or <a href="https://html-online.github.io/" target="_blank">HTML</a>. Just copy the 
+				markdown or the HTML <b>source code</b> into the content box below. In the  example 
+				editor mentioned, the source code is viewable under the <i>View</i> menu.'''
+		}),
+		(None, {
+			'fields': (
+				'enabled',
+				'position',
+				'title',
+				'slug',
+				'content',
+			),
+		}),
+	)
+	list_display = (
+		'position',
+		'title',
+		'slug',
+		'content_custom_rendering',
+		'enabled',
+	)
+	list_display_links = ('title',)
+	list_editable = (
+		'position',
+		'enabled',
+	)
+	ordering_field = 'position'
+	ordering = ['position']
+	actions = [make_enabled, make_disabled, make_inverted]
+	prepopulated_fields = {'slug': ('title',)}
+
+	@admin.display(description="More pages")
+	def content_custom_rendering(self, obj):
+		if len(obj.content) > 256:
+			return f'{obj.content[0:255]}...'
+		return f'{obj.content}'
+	
 admin.site.register(GeneralSettings, GeneralSettingsAdmin)
 admin.site.register(BulletinGroup, BulletinGroupAdmin)
 admin.site.register(ActiveBulletinEntry, BulletinEntryAdmin)
@@ -396,3 +440,4 @@ admin.site.register(ClassSchedule, ClassScheduleAdmin)
 admin.site.register(Quote, QuoteAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
 admin.site.register(ContactTable, ContactTableAdmin)
+admin.site.register(MorePages, MorePagesAdmin)

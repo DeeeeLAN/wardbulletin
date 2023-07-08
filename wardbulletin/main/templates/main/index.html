@@ -2,15 +2,19 @@
 {% load static %}
 
 {% block title %}Home | {{ ward_name }}{% endblock %}
-    
+
 {% block content %}
 <div class="w-full p-4 min-h-[calc(100vh-17rem)] flex items-center">
-  <div class="container mx-auto max-w-100vw md:max-w-[90vw] xl:max-w-6xl flex flex-col gap-6 items-center prose lg:prose-xl prose-{{ theme_color }}">
+  <div
+    class="container mx-auto max-w-100vw md:max-w-[90vw] xl:max-w-6xl flex flex-col gap-6 items-center prose lg:prose-xl prose-{{ theme_color }}">
     <div class="w-full flex flex-col sm:flex-row gap-6">
-      <div class="w-full {% if image.path or quote %}sm:w-1/2{% endif %} flex flex-col items-center justify-center gap-6 bg-{{ theme_color }}-400 py-6 px-12 rounded-lg text-{{ theme_color }}-900">
+      <div
+        class="w-full {% if image.path or quote %}sm:w-1/2{% endif %} flex flex-col items-center justify-center gap-6 bg-{{ theme_color }}-400 py-6 px-12 rounded-lg text-{{ theme_color }}-900">
         <div class="font-bold text-4xl text-center">{{ ward_name }}</div>
         <div class="font-bold text-2xl text-center">Welcome!</div>
-        <div class="font-bold text-2xl text-center">Worship with us each Sunday at {{ first_hour_meeting_time }}. {% if address %}Our meetinghouse is located at:{% endif %}</div>
+        <div class="font-bold text-2xl text-center">Worship with us each Sunday
+          at {{ first_hour_meeting_time }}. {% if address %}Our meetinghouse is
+          located at:{% endif %}</div>
         {% if address %}
         <a href="http://maps.apple.com/?address={{ address.split|join:' ' }}">
           <div class="flex flex-col items-center">
@@ -19,11 +23,25 @@
         </a>
         {% endif %}
         <div class="grid grid-cols-1 gap-4 w-80 not-prose">
-          <a class="" href="{% url 'program' %}"><div class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">Sunday Program</div></a>
-          <a class="" href="{% url 'announcements' %}"><div class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">Announcements</div></a>
-          <a class="" href="{% url 'contacts-resources' %}"><div class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">Contacts &amp; Resources</div></a>
+          <a class href="{% url 'program' %}"><div
+              class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">Sunday
+              Program</div></a>
+          <a class href="{% url 'announcements' %}"><div
+              class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">Announcements</div></a>
+          <a class href="{% url 'contacts-resources' %}"><div
+              class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">Contacts
+              &amp; Resources</div></a>
+          {% for page in more_pages %}
+          <a class href="{% url 'more' page.slug %}"><div
+              class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">
+              {{ page.title }}
+            </div></a>
+          {% endfor %}
           {% if subscribe_email %}
-          <a class="" href="mailto:{{ subscribe_email }}?subject=Subscribe to the Ward Midweek Email List"><div class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">Subscribe to Midweek Emails</div></a>
+          <a class
+            href="mailto:{{ subscribe_email }}?subject=Subscribe to the Ward Midweek Email List"><div
+              class="bg-{{ theme_color }}-200 p-4 rounded-lg text-center shadow-2xl">Subscribe
+              to Midweek Emails</div></a>
           {% endif %}
         </div>
       </div>
@@ -31,16 +49,20 @@
       <div class="w-full sm:w-1/2 flex flex-col items-center">
         {% if image.path %}
         <div class="not-prose">
-          <img class="rounded-lg object-scale-down" src="{% if media %}{{ image.path }}{% else %}{% static image.path %}{% endif %}" alt="{{ image.name }}" />
+          <img class="rounded-lg object-scale-down"
+            src="{% if media %}{{ image.path }}{% else %}{% static image.path %}{% endif %}"
+            alt="{{ image.name }}" />
         </div>
         {% endif %}
         {% if quote %}
         <div class="flex flex-col gap-4 items-end px-4 py-4">
           <div class="italic font-serif text-base">{{ quote.quote|linebreaks }}</div>
           {% if quote.url %}
-          <div class="w-max italic font-serif text-base">&mdash;&nbsp;<a class="" href="{{ quote.url }}">{{quote.source}}</a></div>
+          <div class="w-max italic font-serif text-base">&mdash;&nbsp;<a class
+              href="{{ quote.url }}">{{quote.source}}</a></div>
           {% else %}
-          <div class="w-max italic font-serif text-base">&mdash;&nbsp;{{ quote.source }}</div>
+          <div class="w-max italic font-serif text-base">&mdash;&nbsp;{{
+            quote.source }}</div>
           {% endif %}
         </div>
         {% endif %}

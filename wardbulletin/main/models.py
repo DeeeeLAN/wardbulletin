@@ -387,7 +387,7 @@ class Announcement(models.Model):
 
 @receiver(pre_save, sender=Announcement)
 def announcement_pre_save(sender, instance, **kwargs):
-	'''Sets bulletin entry position if it is not set'''
+	'''Sets announcement position if it is not set'''
 	if instance.position is None:
 		instance.position = (Announcement.objects.all().count() + 1) * 10
 
@@ -475,3 +475,32 @@ def contact_pre_save(sender, instance, **kwargs):
 	'''Sets contact position if it is not set'''
 	if instance.position is None:
 		instance.position = (Contact.objects.all().count() + 1) * 10
+
+
+class MorePages(models.Model):
+	enabled = models.BooleanField(
+		default=True,
+		help_text="Determines if the page should be displayed or not."
+	)
+	position = models.PositiveSmallIntegerField(
+		null=True,
+		blank=True,
+		help_text="The order of the pages in the tab bar. Leave blank to auto-fill with next value."
+	)
+	title = models.CharField(max_length=128, help_text="Required. Displayed in the tab bar.")
+	slug = models.SlugField(help_text="Required. The URL of the page. Defaults to a slugified version of the title.")
+	content = models.TextField(help_text="Required. Supports markdown formatting.")
+
+	class Meta:
+		'''Meta class'''
+		verbose_name = 'More Pages'
+		verbose_name_plural = 'More Pages'
+
+
+@receiver(pre_save, sender=MorePages)
+def morepages_pre_save(sender, instance, **kwargs):
+	'''Sets page position if it is not set'''
+	if instance.position is None:
+		instance.position = (MorePages.objects.all().count() + 1) * 10
+
+

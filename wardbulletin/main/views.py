@@ -4,8 +4,9 @@ from random import choice
 from pathlib import Path
 from django.shortcuts import render
 from django.conf import settings
+from django.http import Http404
 import markdown
-from .models import GeneralSettings, BulletinGroup, ClassSchedule, Quote, Announcement, ContactTable
+from .models import GeneralSettings, BulletinGroup, ClassSchedule, MorePages, Quote, Announcement, ContactTable
 from .temple_photos_map import temples
 import logging 
 
@@ -41,6 +42,7 @@ md_client = markdown.Markdown(extensions=['smarty', 'md_in_html', 'pymdownx.magi
 
 def get_default_context():
 	'''Builds the initial context shared by all pages'''
+
 	gs = GeneralSettings.objects.first()
 	if gs:
 		ward_name = gs.ward_name
@@ -59,12 +61,16 @@ def get_default_context():
 
 	header_theme_color = header_theme_color_map[theme_color]
 
+	# More pages
+	more_pages = MorePages.objects.filter(enabled=True).order_by('position')
+
 	return {
 		'ward_name': ward_name,
 		'logo': logo_path,
 		'theme_color': theme_color,
 		'header_theme_color': header_theme_color,
 		'css_file': css_file,
+		'more_pages': [{'title': p.title, 'slug': p.slug} for p in more_pages],
 	}
 
 
@@ -251,3 +257,20 @@ def contacts_resources(request):
 	})
 
 	return render(request, 'main/contacts-resources.html', context)
+
+
+def more(request, slug):
+	'''Additional pages'''
+
+	context = get_default_context()
+
+	try:
+		more_qs = MorePages.objects.get(enabled=True, slug=slug)
+	except MorePages.DoesNotExist:
+		raise Http404('Page not found')
+	
+	context.update({
+		'title': more_qs.title,
+		'content': md_client.convert(more_qs.content),
+	})
+	return render(request, 'main/more.html', context)
